@@ -25,20 +25,29 @@ ifstream ifs ("CurrentBoard.txt", ifstream::in);
 ofstream ofs ("CurrentBoard.txt", ofstream::out);
 void listShapes(char player)
 {
+	pieces_pointer = (player == 'A'? pieces_A : pieces_B);
     if(player == 'A')
     {
         for(int i=0;i<shapesA.size();i++)
         {
-            cout<<i<<":"<<endl;
-            printShape(shapesA[i]);
+        	if(pieces_pointer[i] == 1) {
+				cout << i << ":" << endl;
+            	printShape(shapesA[i]);        		
+        	} else {
+        		cout << i << ": already used.\n\n" << endl;
+        	}
         }
     }
     else
     {
         for(int i=0;i<shapesB.size();i++)
         {
-            cout<<i<<":"<<endl;
-            printShape(shapesB[i]);
+        	if(pieces_pointer[i] == 1) {
+				cout << i << ":" << endl;
+            	printShape(shapesB[i]);        		
+        	} else {
+        		cout << i << ": already used." << endl;
+        	}
         }
     }
 }
@@ -188,6 +197,27 @@ bool playerMove(shape shp, int shapeID, char player)
     // }
 }
 
+bool checkpieces(int id){
+	return 0;
+}
+
+bool checkgame(){
+	int counter = 0, cannot_put_any_pieces = 1;
+	for(int i = 0;i < 21; i++){
+		if(pieces_pointer[i] == 1) {
+			counter++;
+			cannot_put_any_pieces = checkpieces(i);
+		}
+	}
+	if (counter == 0 || cannot_put_any_pieces) {
+		cout << "You have no more pieces or you can`t place any more." << endl;
+		return false;
+	} else {
+		cout << "still: " << counter << " pieces.Keep going." << endl;
+		return true;
+	}
+}
+
 void init()
 {
     for(int i=0;i<14;i++)
@@ -228,88 +258,99 @@ void command()
         player = (turn)?'A':'B';
         pieces_pointer = (player == 'A')? pieces_A : pieces_B;
         // cout<<char('0'-1);
-        cout << "|--------------------------------- \n|" << endl;
-        cout << "| [#instruction]: " << instr_counter << "\n|\n";
-        cout << "|  " << player <<"'s turn, you can press 1~7:"<<endl;
-        cout << "|\t1) Select Shape\n|\t2) Flip\n|\t3) Turn_clockwise\n|\t4) player_Move\n|\t5) Print_map\n|\t6) List_shapes\n|\t7) EXIT\n|\n";
-        cout << "|--------------------------------- " << endl;
-        cout << " Blockus >> ";
-        cin>>instr;
-        if(instr == 7)
-            break;
-        if(instr == 1)		// select shape.
-        {
-            isSelect = true;
-            cout<<"shape index:";
-            cin >> shapeID;
-            if (chackindex (shapeID)) {
-            	if (pieces_pointer[shapeID] == 0) {
-            		cout << "shapeID: " << shapeID << " already on the board, choose other one." << endl;
-            		continue;
-            	} else {
-		            if(player == 'A')
-		                selected = shapesA[shapeID];
-		            else
-		                selected = shapesB[shapeID];
-		            printShape(selected);      		
-            	}
-            } else {
-            	cout << "no this index! re do instruction!." << endl;
-            	continue;
-            }
-        }
-        else if(instr == 2)	// Flip
-        {
-            selected = flip(selected);
-            printShape(selected);
-        }
-        else if(instr == 3) // Turn
-        {
-            selected = turnClockwise(selected);
-            printShape(selected);
-        }
-        else if(instr == 4) //player_move.
-        {
-            if(isSelect == false)//Hasn't selet yet
-            {
-                cout<<"Please Select a shape."<<endl;
-                cout<<"shape index:";
-                cin >> shapeID;
-                if (chackindex(shapeID)) {
-	                if(player == 'A')
-	                    selected = shapesA[shapeID];
-	                else
-	                    selected = shapesB[shapeID];
-                } else {
-                	cout << "no this index! re do instruction!." << endl;
-                	continue;
-                }
-            }
-            printShape(selected);
 
-            legalMove = playerMove(selected, shapeID, player);
-            if(legalMove == true)
-            {
-            	instr_counter++;
-                isSelect = false;
-                turn = !turn;
-            }
+        // check if player still have move to implement.
+        if (checkgame() == false) {
+            isSelect = false;
+            turn = !turn;
+        } else {
 
-        }
-        else if(instr == 5)	//map.
-        {
-            printMap();
-        }
-        else if(instr == 6)	//list shape.
-        {
-            listShapes(player);
-        }
-        else
-        {
-            cout<<"Not a command."<<endl;
-        }
-        // cout<<"\nInput a 1~7 num to continue:";
-        // cin>>junk;
+	        cout << "|--------------------------------- \n|" << endl;
+	        cout << "| [#instruction]: " << instr_counter << "\n|\n";
+	        cout << "|  " << player <<"'s turn, you can press 1~7:"<<endl;
+	        cout << "|\t1) Select Shape\n|\t2) Flip\n|\t3) Turn_clockwise\n|\t4) player_Move\n|\t5) Print_map\n|\t6) List_shapes\n|\t7) check condition\n|\t8) EXIT\n|\n";
+	        cout << "|--------------------------------- " << endl;
+	        cout << " Blockus >> ";
+	        cin>>instr;
+	        if(instr == 8)
+	            break;
+	        if(instr == 1)		// select shape.
+	        {
+	            isSelect = true;
+	            cout<<"shape index:";
+	            cin >> shapeID;
+	            if (chackindex (shapeID)) {
+	            	if (pieces_pointer[shapeID] == 0) {
+	            		cout << "shapeID: " << shapeID << " already on the board, choose other one." << endl;
+	            		continue;
+	            	} else {
+			            if(player == 'A')
+			                selected = shapesA[shapeID];
+			            else
+			                selected = shapesB[shapeID];
+			            printShape(selected);      		
+	            	}
+	            } else {
+	            	cout << "no this index! re do instruction!." << endl;
+	            	continue;
+	            }
+	        }
+	        else if(instr == 2)	// Flip
+	        {
+	            selected = flip(selected);
+	            printShape(selected);
+	        }
+	        else if(instr == 3) // Turn
+	        {
+	            selected = turnClockwise(selected);
+	            printShape(selected);
+	        }
+	        else if(instr == 4) //player_move.
+	        {
+	            if(isSelect == false)//Hasn't selet yet
+	            {
+	                cout<<"Please Select a shape."<<endl;
+	                cout<<"shape index:";
+	                cin >> shapeID;
+	                if (chackindex(shapeID)) {
+		                if(player == 'A')
+		                    selected = shapesA[shapeID];
+		                else
+		                    selected = shapesB[shapeID];
+	                } else {
+	                	cout << "no this index! re do instruction!." << endl;
+	                	continue;
+	                }
+	            }
+	            printShape(selected);
+
+	            legalMove = playerMove(selected, shapeID, player);
+	            if(legalMove == true)
+	            {
+	            	instr_counter++;
+	                isSelect = false;
+	                turn = !turn;
+	            }
+
+	        }
+	        else if(instr == 5)	//map.
+	        {
+	            printMap();
+	        }
+	        else if(instr == 6)	//list shape.
+	        {
+	            listShapes(player);
+	        }
+	        else if (instr == 7) {
+	        	checkgame();
+	        }
+	        else
+	        {
+	            cout<<"Not a command."<<endl;
+	        }
+	        // cout<<"\nInput a 1~7 num to continue:";
+	        // cin>>junk;
+	    }
     }
 
 }
