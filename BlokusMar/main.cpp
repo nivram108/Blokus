@@ -23,6 +23,7 @@ int *pieces_pointer;
 
 ifstream ifs ("CurrentBoard.txt", ifstream::in);
 ofstream ofs ("CurrentBoard.txt", ofstream::out);
+
 void listShapes(char player)
 {
 	pieces_pointer = (player == 'A'? pieces_A : pieces_B);
@@ -33,9 +34,10 @@ void listShapes(char player)
         	if(pieces_pointer[i] == 1) {
 				cout << i << ":" << endl;
             	printShape(shapesA[i]);        		
-        	} else {
-        		cout << i << ": already used.\n\n" << endl;
-        	}
+        	} 
+        	// else {
+        	// 	cout << i << ": already used.\n\n" << endl;
+        	// }
         }
     }
     else
@@ -45,9 +47,10 @@ void listShapes(char player)
         	if(pieces_pointer[i] == 1) {
 				cout << i << ":" << endl;
             	printShape(shapesB[i]);        		
-        	} else {
-        		cout << i << ": already used." << endl;
-        	}
+        	} 
+        	// else {
+        	// 	cout << i << ": already used." << endl;
+        	// }
         }
     }
 }
@@ -86,8 +89,11 @@ bool chackindex(int i) {
 }
 
 bool isConnectedToShoulder(shape shp, int x, int y, char player)  // connected to a shoulder
-{
+{	
+	//cout << "*->" << *first_step_pointer << endl;
+	//cout << "yo" << endl;
 	if (player == 'A' && *first_step_pointer == 0 && x == 4 && y == 4){ //first move of A;
+		// cout << "in connect move" << endl;
 		return true;
 	} else if (player == 'B' && *first_step_pointer == 0 && x == 9 && y == 9){ //first move of B;
 		return true;
@@ -101,12 +107,13 @@ bool isConnectedToShoulder(shape shp, int x, int y, char player)  // connected t
 	        }
 	    }
 	}
-    cout<<"Unconneted!"<<endl;
+    // cout<<"Unconneted!"<<endl;
     return false;
 }
 
 bool isTouchedBySelf(shape shp, int x, int y, char player)  // touched by itself
 {
+	//cout << "in touch move" << endl;
 	if (player == 'A' && *first_step_pointer == 0 && x == 4 && y == 4){ //first move of A;
 		return false;
 	} else if (player == 'B' && *first_step_pointer == 0 && x == 9 && y == 9){ //first move of B;
@@ -129,8 +136,9 @@ bool isTouchedBySelf(shape shp, int x, int y, char player)  // touched by itself
 }
 bool isSpare(shape shp, int x, int y, char player)
 {	
+	//cout << "in spare move" << endl;
 	if (*first_step_pointer == 0) {
-		cout << "judge by spare." << endl;
+		// cout << "judge by spare." << endl;
 		return true;
 	} else {
 	    for(int i=0;i<5;i++)
@@ -143,11 +151,12 @@ bool isSpare(shape shp, int x, int y, char player)
 }
 bool isLegalMove(shape shp, int x, int y, char player)
 {
+	// cout << "in legal move" << endl;
     if( isConnectedToShoulder(shp, x, y, player)==false || isTouchedBySelf(shp, x, y, player)==true || isSpare(shp, x, y, player) ==false ){
-        cout << isConnectedToShoulder(shp, x, y, player) << ", " << isTouchedBySelf(shp, x, y, player) << ", " << isSpare(shp, x, y, player) << endl;
+        // cout << isConnectedToShoulder(shp, x, y, player) << ", " << isTouchedBySelf(shp, x, y, player) << ", " << isSpare(shp, x, y, player) << endl;
         return false;
     }
-    cout << isConnectedToShoulder(shp, x, y, player) << ", " << isTouchedBySelf(shp, x, y, player) << ", " << isSpare(shp, x, y, player) << endl;
+    // cout << isConnectedToShoulder(shp, x, y, player) << ", " << isTouchedBySelf(shp, x, y, player) << ", " << isSpare(shp, x, y, player) << endl;
     return true;
 }
 bool playerMove(shape shp, int shapeID, char player)
@@ -197,25 +206,68 @@ bool playerMove(shape shp, int shapeID, char player)
     // }
 }
 
-bool checkpieces(int id){
-	return 0;
+bool checkpieces(int id, char player){
+	
+	// loop though all board.
+	shape selected;
+
+    if(player == 'A')
+        selected = shapesA[id];
+    else
+        selected = shapesB[id];
+    
+	for (int i = 0; i < 14; i++) {
+
+		for (int j = 0; j < 14; j++) {
+			
+			// two flip.
+			for (int f = 0; f < 2; f++) {
+
+				if (f > 0) selected = flip(selected);
+
+				// and four direction.
+				for (int clockwise = 0; clockwise < 4; clockwise++){
+
+					if (clockwise > 0) selected = turnClockwise(selected);
+
+					if(isLegalMove(shapesA[0], i, j, player)) {
+						// if this piece can put => return 0.
+						return 0;
+					} else {
+						continue;
+					}
+				}
+			}
+		}
+	}
+	return 1; // if this piece can`t   => return 1.
 }
 
-bool checkgame(){
+bool checkgame(char player){
+	cout << "\n\nstart check...\n" << endl;
 	int counter = 0, cannot_put_any_pieces = 1;
+				counter++;
 	for(int i = 0;i < 21; i++){
 		if(pieces_pointer[i] == 1) {
 			counter++;
-			cannot_put_any_pieces = checkpieces(i);
+		}
+	}
+	for(int i = 0;i < 21 && cannot_put_any_pieces; i++){
+		if(pieces_pointer[i] == 1) {
+			// cout << "call for "  << i << endl;
+ 			if (checkpieces(i,player) == 0) cannot_put_any_pieces = 0;
 		}
 	}
 	if (counter == 0 || cannot_put_any_pieces) {
-		cout << "You have no more pieces or you can`t place any more." << endl;
+		cout << "|--------------------------------- \n|" << endl;
+		cout << "| " << player << "You have no more pieces or you can`t place any more.\n|" << endl;
 		return false;
 	} else {
-		cout << "still: " << counter << " pieces.Keep going." << endl;
+		cout << "|--------------------------------- \n|" << endl;
+		cout << "| " << player << ": " << counter << " pieces left. Keep going.\n|" << endl;
 		return true;
 	}
+	return true;
 }
 
 void init()
@@ -251,6 +303,7 @@ void command()
     shape selected = shapes[0];
     bool legalMove = false;
     bool turn = true, isSelect = false;
+    first_step_pointer = &first_step_flag_A;
     while(true)
     {
     	cout << endl;
@@ -260,14 +313,12 @@ void command()
         // cout<<char('0'-1);
 
         // check if player still have move to implement.
-        if (checkgame() == false) {
+        if (checkgame(player) == false) {
             isSelect = false;
             turn = !turn;
         } else {
 
-	        cout << "|--------------------------------- \n|" << endl;
-	        cout << "| [#instruction]: " << instr_counter << "\n|\n";
-	        cout << "|  " << player <<"'s turn, you can press 1~7:"<<endl;
+	        cout << "| [instruction #" << instr_counter << "] you can press 1~7:" <<"\n|\n";
 	        cout << "|\t1) Select Shape\n|\t2) Flip\n|\t3) Turn_clockwise\n|\t4) player_Move\n|\t5) Print_map\n|\t6) List_shapes\n|\t7) check condition\n|\t8) EXIT\n|\n";
 	        cout << "|--------------------------------- " << endl;
 	        cout << " Blockus >> ";
@@ -342,7 +393,7 @@ void command()
 	            listShapes(player);
 	        }
 	        else if (instr == 7) {
-	        	checkgame();
+	        	checkgame(player);
 	        }
 	        else
 	        {
