@@ -3,7 +3,12 @@
 #include <string>
 #include <cstdlib>
 #include <fstream>
+#include <string>
 #include "shapes.h"
+#define RESET   "\033[0m"
+#define RED     "\033[31m"      /* Red */
+#define YELLOW  "\033[33m"      /* Yellow */
+#define MAGENTA "\033[45m"      /* Magenta */
 
 using namespace std;
 vector<shape> shapes, shapesA, shapesB;
@@ -23,6 +28,7 @@ int *pieces_pointer;
 
 ifstream ifs ("CurrentBoard.txt", ifstream::in);
 ofstream ofs ("CurrentBoard.txt", ofstream::out);
+
 
 void listShapes(char player)
 {
@@ -61,7 +67,12 @@ void printMap()
     cout <<"|\t  ";
     for(int i=0;i<14;i++)
     {
-        cout<<i%10;
+    	if (i == 4 || i == 9) {
+    		cout << MAGENTA << i%10 << RESET;
+    	} else {
+    		cout << i%10;
+    	}
+       
     }
 
     cout<<endl;
@@ -73,10 +84,20 @@ void printMap()
         } else {
             cout << "|\t ";
         }
-        cout<<i%10;
+    	if (i == 4 || i == 9) {
+    		cout << MAGENTA << i%10 << RESET;
+    	} else {
+    		cout << i%10;
+    	}
         for(int j=0;j<14;j++)
         {
-            printf("%c", board[i][j]);
+        	if(board[i][j] == 'A') {
+        		cout << YELLOW << board[i][j] << RESET;
+        	} else if (board[i][j] == 'B'){
+        		cout << RED << board[i][j] << RESET;
+        	} else {
+        		cout << board[i][j];
+        	}
         }
         printf("\n");
     }
