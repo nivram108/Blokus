@@ -1,0 +1,18 @@
+# depslib dependency file v1.0
+1469014821 source:c:\users\john cena\downloads\blokus-master (3)\blokus-master\blokusmar\main.cpp
+	<iostream>
+	<vector>
+	<string>
+	<cstdlib>
+	<cstdio>
+	<ctime>
+	<fstream>
+	<string>
+	"shapes.h"
+
+1468980399 c:\users\john cena\downloads\blokus-master (3)\blokus-master\blokusmar\shapes.h
+	<iostream>
+	<vector>
+	<string>
+	<cstdlib>
+
