@@ -8,16 +8,15 @@
 #include <string>
 #include "shapes.h"
 
-#define RESET   "\033[0m"
-#define RED     "\033[31m"      /* Red */
-#define YELLOW  "\033[33m"      /* Yellow */
-#define MAGENTA "\033[45m"      /* Magenta */
+#define RESET   ""
+#define RED     ""      /* Red */
+#define YELLOW  ""      /* Yellow */
+#define MAGENTA ""      /* Magenta */
 
 
 using namespace std;
 int biggestRange = 0, bestA, bestB;
 vector<shape> shapes, shapesA, shapesB;
-
 char board[14][14];
 char tmpBoard[14][14];
 int shoulder[4][2] = {{1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
@@ -97,9 +96,11 @@ void printMap()
         for(int j=0;j<14;j++)
         {
         	if(board[i][j] == 'A') {
-        		cout << YELLOW << board[i][j] << RESET;
+        		//cout << YELLOW << board[i][j] << RESET;
+        		cout << YELLOW << 'A' << RESET;
         	} else if (board[i][j] == 'B'){
-        		cout << RED << board[i][j] << RESET;
+        		//cout << RED << board[i][j] << RESET;
+        		cout << RED << 'B' << RESET;
         	} else {
         		cout << board[i][j];
         	}
@@ -113,26 +114,63 @@ bool chackindex(int i) {
 	if ( i >= 0 && i <= 20) return true;
 	else return false;
 }
+bool isLegalFirst(shape shp, int x, int y, char player)
+{
+    bool isLegal = false;
+    if(player == 'A')
+    {
+        if(first_step_flag_A == 0)// is first
+        {
+            for(int i=0;i<shp.size;i++)
+            {
+
+                if(x + shp.x[i] == 4 && y + shp.y[i] == 4)
+                {
+                    //first_step_flag_A = 1;
+     //               cout<<x + shp.x[i]<<" "<<y + shp.y[i];
+                    return true;
+                }
+            }
+        }
+    }
+    else
+    {
+        if(first_step_flag_B == 0)// is first
+        {
+            for(int i=0;i<shp.size;i++)
+            {
+                if(x + shp.x[i] == 9 && y + shp.y[i] == 9)
+                {
+                    //first_step_flag_B = 1;
+  //                  cout<<x + shp.x[i]<<" "<<y + shp.y[i];
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
+}
 
 bool isConnectedToShoulder(shape shp, int x, int y, char player)  // connected to a shoulder
 {
 	//cout << "*->" << *first_step_pointer << endl;
 	//cout << "yo" << endl;
-	if (player == 'A' && *first_step_pointer == 0 && x == 4 && y == 4){ //first move of A;
-		// cout << "in connect move" << endl;
-		return true;
-	} else if (player == 'B' && *first_step_pointer == 0 && x == 9 && y == 9){ //first move of B;
-		return true;
-	} else {
+//	if (player == 'A' && *first_step_pointer == 0 && x == 4 && y == 4){ //first move of A;
+//		// cout << "in connect move" << endl;
+//		return true;
+//	} else if (player == 'B' && *first_step_pointer == 0 && x == 9 && y == 9){ //first move of B;
+//		return true;
+//	} else {
 	    for(int i=0;i<5;i++)//each block of the shape
 	    {                //     block(x)                              block(y)                              board(x,y)
 	        for(int j=0;j<4;j++)//each shoulder of the block
 	        {
-	            if(board[shp.x[i]+x+shoulder[j][0]][shp.y[i]+y+shoulder[j][1]] == player)
+
+	            if(board[shp.x[i]+x+shoulder[j][0]][shp.y[i]+y+shoulder[j][1]] == player && chackindex(shp.x[i]+x+shoulder[j][0])&& chackindex(shp.y[i]+y+shoulder[j][1]))
 	                return true;
 	        }
 	    }
-	}
+	//}
     // cout<<"Unconneted!"<<endl;
     return false;
 }
@@ -140,11 +178,11 @@ bool isConnectedToShoulder(shape shp, int x, int y, char player)  // connected t
 bool isTouchedBySelf(shape shp, int x, int y, char player)  // touched by itself
 {
 	//cout << "in touch move" << endl;
-	if (player == 'A' && *first_step_pointer == 0 && x == 4 && y == 4){ //first move of A;
-		return false;
-	} else if (player == 'B' && *first_step_pointer == 0 && x == 9 && y == 9){ //first move of B;
-		return false;
-	} else {
+//	if (player == 'A' && *first_step_pointer == 0 && x == 4 && y == 4){ //first move of A;
+//		return false;
+//	} else if (player == 'B' && *first_step_pointer == 0 && x == 9 && y == 9){ //first move of B;
+//		return false;
+//	} else {
 
 	    for(int i=0;i<5;i++)//each block of the beside
 	    {                //     block(x)                              block(y)                              board(x,y)
@@ -157,33 +195,49 @@ bool isTouchedBySelf(shape shp, int x, int y, char player)  // touched by itself
 	            }
 	        }
 	    }
-	}
+	//}
     return false;
 }
 bool isSpare(shape shp, int x, int y, char player)
 {
 	//cout << "in spare move" << endl;
-	if (*first_step_pointer == 0) {
-		// cout << "judge by spare." << endl;
-		return true;
-	} else {
+//	if (*first_step_pointer == 0) {
+//		// cout << "judge by spare." << endl;
+//		return true;
+//	} else {
 	    for(int i=0;i<5;i++)
 	    {
 	        if((shp.x[i]+x < 14 && shp.x[i]+x >= 0 && shp.y[i]+y <14 && shp.y[i]+y >= 0  && board[shp.x[i]+x][shp.y[i]+y] == '.')==false ) // the block is in board range and unoccupied
 	            return false;
 	    }
-	}
+//	}
     return true;
 }
 bool isLegalMove(shape shp, int x, int y, char player)
 {
+
+    int  firstStep = (player == 'A') ? first_step_flag_A : first_step_flag_B;
+    if(firstStep == 0)//is first step
+    {
+        if(isLegalFirst(shp, x, y, player) == true)// is first step
+        {
+            //printShape(shp);
+ //           cout<<x<<", "<<y<<" player : "<<player<<endl;
+ //           cout<<"FIRST!"<<endl;
+            return true;
+        }
+        else
+            return false;
+    }
 	// cout << "in legal move" << endl;
     if( isConnectedToShoulder(shp, x, y, player)==false || isTouchedBySelf(shp, x, y, player)==true || isSpare(shp, x, y, player) ==false ){
         // cout << isConnectedToShoulder(shp, x, y, player) << ", " << isTouchedBySelf(shp, x, y, player) << ", " << isSpare(shp, x, y, player) << endl;
         return false;
     }
+    else
+        return true;
     // cout << isConnectedToShoulder(shp, x, y, player) << ", " << isTouchedBySelf(shp, x, y, player) << ", " << isSpare(shp, x, y, player) << endl;
-    return true;
+    return false;
 }
 bool playerMove(shape shp, int shapeID, char player, int x, int y)
 {
@@ -199,14 +253,32 @@ bool playerMove(shape shp, int shapeID, char player, int x, int y)
      if (pieces_pointer[shapeID] == 0) {
      	//cout << "shapeID: " << shapeID << " already on the board, choose other one." << endl;
      	return false;
-     } else {
+     } //else {
 
     	// 2. check if this step is first step.
-		if(player == 'A' && *first_step_pointer == 0 && (x != 4 || y != 4)) {	// first time.
-	    	//cout << "player A must start from original point (4,4)." << endl;
-	    } else if (player == 'B' && *first_step_pointer == 0 && (x != 9 || y != 9)) {
-	    	//cout << "player B must start from original point (9,9)." << endl;
-	    } else {
+//		if(player == 'A' && *first_step_pointer == 0 ) {	// first time.
+//	    	//cout << "player A must start from original point (4,4)." << endl;
+//	    	bool legalFirst = false;
+//	    	for(int i=0;i<shp.size; i++)
+//            {
+//                if(x+shp.x[i] == 4 && y+shp.y[i] == 4)
+//                {
+//                    legalFirst = true;
+//                }
+//            }
+//	    	return legalFirst;
+//	    } else if (player == 'B' && *first_step_pointer == 0 ) {
+//	    	//cout << "player B must start from original point (9,9)." << endl;
+//	    	bool legalFirst = false;
+//	    	for(int i=0;i<shp.size; i++)
+//            {
+//                if(x+shp.x[i] == 9 && y+shp.y[i] == 9)
+//                {
+//                    legalFirst = true;
+//                }
+//            }
+//	    	return legalFirst;
+//	    } else {
 
 	    	// check if legal.
 		    if(isLegalMove(shp, x, y, player))
@@ -215,7 +287,11 @@ bool playerMove(shape shp, int shapeID, char player, int x, int y)
 		        {
 		            board[shp.x[i]+x][shp.y[i]+y] = player;
 		        }
-		        *first_step_pointer = 1;
+		        if(player == 'A')
+                    first_step_flag_A = 1;
+                else
+                    first_step_flag_B = 1;
+		        //*first_step_pointer = 1;
 		        //system("cls");
 		        printMap();
 
@@ -226,8 +302,8 @@ bool playerMove(shape shp, int shapeID, char player, int x, int y)
 		        //cout<<"Illegal move!"<<endl;
 		        return false;
 		    }
-	    }
-     }
+//	    }
+ //    }
 }
 
 bool checkpieces(int id, char player){
@@ -558,6 +634,7 @@ void autoPlay(char player)
         shapeID = rand()%21;
     }
     selected = autoShape[shapeID];
+    //cout<<"shapeID:"<<shapeID<<endl;
     //rand flip
     if(rand()%2 == 1)
         selected = flip(selected);
@@ -581,6 +658,8 @@ void autoPlay(char player)
         y = rand()%14;
     }
     pieces_pointer[shapeID] = 0;
+    cout<<player<<"'s step\n^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"<<endl;
+    //printMap();
     return;
 }
 
@@ -591,11 +670,13 @@ void autoGame()
     first_step_pointer = (player == 'A')? &first_step_flag_A: &first_step_flag_B;
     pieces_pointer = (player == 'A') ? pieces_A : pieces_B;
     // cout << "player:" << player << " go first" << endl;
+    string junk;
     while(checkgameClear('A') == true || checkgameClear('B') == true)
     {
         pieces_pointer = (player == 'A') ? pieces_A : pieces_B;
         autoPlay(player);
         turn = !turn;
+        cin>>junk;
         player = (turn == 0) ? 'A' : 'B';
     }
 }
@@ -765,7 +846,7 @@ int main()
    // printf("Select mode: \n\"player\" / \"auto\" :");
     cout << "|--------------------------------- |" << endl;
     cout << "|   "<<endl<<"| Select Mode:" <<"\n|\n";
-    cout << "|\t1) Player\n|\t2) Auto\n|\t3) See Priority Advantage\n|"<<endl;
+    cout << "|\t1) Player\n|\t2) Auto\n|\t3) PK\n|\t4) See Priority Advantage\n|"<<endl;
     cout << "|--------------------------------- \n";
     cout<<"Blokus>>";
     cin>>mode;
@@ -777,6 +858,8 @@ int main()
     }
     else if(mode == 2)
         autoGame();
+    else if(mode == 3)
+        PK();
     else
     {
         int winA = 0, winB = 0, games;
