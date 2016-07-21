@@ -188,7 +188,7 @@ bool isTouchedBySelf(shape shp, int x, int y, char player)  // touched by itself
 	    {                //     block(x)                              block(y)                              board(x,y)
 	        for(int j=0;j<4;j++)//each side of the block
 	        {
-	            if(board[shp.x[i]+x+side[j][0]][shp.y[i]+y+side[j][1]] == player)
+	            if(board[shp.x[i]+x+side[j][0]][shp.y[i]+y+side[j][1]] == player && chackindex(shp.x[i]+x+side[j][0]) && chackindex(shp.y[i]+y+side[j][1]))
 	            {
 	                //cout<<"Touch!"<<endl;
 	                return true;
@@ -517,11 +517,20 @@ void command()
 	        }
 	        else if(instr == 2)	// Flip
 	        {
+	        	if(isSelect == false)
+	        	{
+	        		cout<<"Please Select a shape."<<endl;
+	                continue;
+	        	}
 	            selected = flip(selected);
 	            printShape(selected);
 	        }
 	        else if(instr == 3) // Turn
 	        {
+	        	if (isSelect == false) {
+	        		cout<<"Please Select a shape."<<endl;
+	                continue;
+	        	}
 	            selected = turnClockwise(selected);
 	            printShape(selected);
 	        }
