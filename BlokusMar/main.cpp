@@ -13,8 +13,8 @@
 #define YELLOW  ""      /* Yellow */
 #define MAGENTA ""      /* Magenta */
 
-
 using namespace std;
+
 int biggestRange = 0, bestA, bestB;
 vector<shape> shapes, shapesA, shapesB;
 char board[14][14];
@@ -34,76 +34,58 @@ ifstream ifs ("CurrentBoard.txt", ifstream::in);
 ofstream ofs ("CurrentBoard.txt", ofstream::out);
 
 
-void listShapes(char player)
-{
+void listShapes(char player){
 	pieces_pointer = (player == 'A'? pieces_A : pieces_B);
-    if(player == 'A')
-    {
-        for(int i=0;i<shapesA.size();i++)
-        {
-        	if(pieces_pointer[i] == 1) {
+    if (player == 'A') {
+        for (int i=0; i<shapesA.size(); i++) {
+        	if (pieces_pointer[i] == 1) {
 				cout << i << ":" << endl;
             	printShape(shapesA[i]);
         	}
-
-        	// else {
-        	// 	cout << i << ": already used.\n\n" << endl;
-        	// }
         }
     }
-    else
-    {
-        for(int i=0;i<shapesB.size();i++)
-        {
-        	if(pieces_pointer[i] == 1) {
+    else {
+        for (int i=0; i<shapesB.size(); i++) {
+        	if (pieces_pointer[i] == 1) {
 				cout << i << ":" << endl;
             	printShape(shapesB[i]);
         	}
-        	// else {
-        	// 	cout << i << ": already used." << endl;
-        	// }
         }
     }
 }
+
 void printMap()
 {
 	cout << "|---------------------------------\n| [Map]" << endl;
-    cout <<"|\t            1111"<<endl;
-    cout <<"|\t  ";
-    for(int i=0;i<14;i++)
-    {
-    	if (i == 4 || i == 9) {
+    cout << "|\t            1111" << endl;
+    cout << "|\t  ";
+    for (int i=0; i<14; i++) {
+    	if (i == 4 || i == 9)
     		cout << MAGENTA << i%10 << RESET;
-    	} else {
+    	else
     		cout << i%10;
-    	}
     }
 
-    cout<<endl;
+    cout << endl;
 
-    for(int i=0;i<14;i++)
-    {
-        if(i>=10) {
+    for (int i=0; i<14; i++) {
+        if (i>=10)
             cout << "|\t" << 1;
-        } else {
+        else
             cout << "|\t ";
-        }
-    	if (i == 4 || i == 9) {
+
+    	if (i == 4 || i == 9)
     		cout << MAGENTA << i%10 << RESET;
-    	} else {
+    	else
     		cout << i%10;
-    	}
-        for(int j=0;j<14;j++)
-        {
-        	if(board[i][j] == 'A') {
-        		//cout << YELLOW << board[i][j] << RESET;
+
+        for (int j=0; j<14; j++) {
+        	if (board[i][j] == 'A')
         		cout << YELLOW << 'A' << RESET;
-        	} else if (board[i][j] == 'B'){
-        		//cout << RED << board[i][j] << RESET;
+        	else if (board[i][j] == 'B')
         		cout << RED << 'B' << RESET;
-        	} else {
+        	else 
         		cout << board[i][j];
-        	}
         }
         printf("\n");
     }
@@ -114,264 +96,154 @@ bool chackindex(int i) {
 	if ( i >= 0 && i <= 20) return true;
 	else return false;
 }
+
 bool isLegalFirst(shape shp, int x, int y, char player)
 {
     bool isLegal = false;
-    if(player == 'A')
-    {
-        if(first_step_flag_A == 0)// is first
-        {
-            for(int i=0;i<shp.size;i++)
-            {
-
-                if(x + shp.x[i] == 4 && y + shp.y[i] == 4)
-                {
-                    //first_step_flag_A = 1;
-     //               cout<<x + shp.x[i]<<" "<<y + shp.y[i];
+    if (player == 'A') {
+        if (first_step_flag_A == 0) {	// is first
+            for (int i=0; i<shp.size; i++) {
+                if (x + shp.x[i] == 4 && y + shp.y[i] == 4) 
                     return true;
-                }
             }
         }
     }
-    else
-    {
-        if(first_step_flag_B == 0)// is first
-        {
-            for(int i=0;i<shp.size;i++)
-            {
-                if(x + shp.x[i] == 9 && y + shp.y[i] == 9)
-                {
-                    //first_step_flag_B = 1;
-  //                  cout<<x + shp.x[i]<<" "<<y + shp.y[i];
-                    return true;
-                }
+    else {
+        if (first_step_flag_B == 0) {	// is first
+            for (int i=0;i<shp.size;i++) {
+                if (x + shp.x[i] == 9 && y + shp.y[i] == 9)
+                	return true;
             }
         }
     }
     return false;
 }
 
-bool isConnectedToShoulder(shape shp, int x, int y, char player)  // connected to a shoulder
+// connected to a shoulder
+bool isConnectedToShoulder(shape shp, int x, int y, char player)
 {
-	//cout << "*->" << *first_step_pointer << endl;
-	//cout << "yo" << endl;
-//	if (player == 'A' && *first_step_pointer == 0 && x == 4 && y == 4){ //first move of A;
-//		// cout << "in connect move" << endl;
-//		return true;
-//	} else if (player == 'B' && *first_step_pointer == 0 && x == 9 && y == 9){ //first move of B;
-//		return true;
-//	} else {
-	    for(int i=0;i<5;i++)//each block of the shape
-	    {                //     block(x)                              block(y)                              board(x,y)
-	        for(int j=0;j<4;j++)//each shoulder of the block
-	        {
-
-	            if(board[shp.x[i]+x+shoulder[j][0]][shp.y[i]+y+shoulder[j][1]] == player && chackindex(shp.x[i]+x+shoulder[j][0])&& chackindex(shp.y[i]+y+shoulder[j][1]))
-	                return true;
-	        }
+	for (int i=0; i<5; i++) {	//each block of the shape
+	    for (int j=0; j<4; j++) { 	//each shoulder of the block
+	        if (board[shp.x[i]+x+shoulder[j][0]][shp.y[i]+y+shoulder[j][1]] == player && chackindex(shp.x[i]+x+shoulder[j][0])&& chackindex(shp.y[i]+y+shoulder[j][1]))
+	            return true;
 	    }
-	//}
-    // cout<<"Unconneted!"<<endl;
+	}
     return false;
 }
 
-bool isTouchedBySelf(shape shp, int x, int y, char player)  // touched by itself
+// touched by itself
+bool isTouchedBySelf(shape shp, int x, int y, char player)
 {
-	//cout << "in touch move" << endl;
-//	if (player == 'A' && *first_step_pointer == 0 && x == 4 && y == 4){ //first move of A;
-//		return false;
-//	} else if (player == 'B' && *first_step_pointer == 0 && x == 9 && y == 9){ //first move of B;
-//		return false;
-//	} else {
-
-	    for(int i=0;i<5;i++)//each block of the beside
-	    {                //     block(x)                              block(y)                              board(x,y)
-	        for(int j=0;j<4;j++)//each side of the block
-	        {
-	            if(board[shp.x[i]+x+side[j][0]][shp.y[i]+y+side[j][1]] == player && chackindex(shp.x[i]+x+side[j][0]) && chackindex(shp.y[i]+y+side[j][1]))
-	            {
-	                //cout<<"Touch!"<<endl;
-	                return true;
-	            }
-	        }
-	    }
-	//}
+	for (int i=0; i<5; i++) {	//each block of the beside
+	    for (int j=0;j<4;j++) {	//each side of the block
+	        if (board[shp.x[i]+x+side[j][0]][shp.y[i]+y+side[j][1]] == player && chackindex(shp.x[i]+x+side[j][0]) && chackindex(shp.y[i]+y+side[j][1]))
+	          	return true;
+        }
+    }
     return false;
 }
+
 bool isSpare(shape shp, int x, int y, char player)
 {
-	//cout << "in spare move" << endl;
-//	if (*first_step_pointer == 0) {
-//		// cout << "judge by spare." << endl;
-//		return true;
-//	} else {
-	    for(int i=0;i<5;i++)
-	    {
-	        if((shp.x[i]+x < 14 && shp.x[i]+x >= 0 && shp.y[i]+y <14 && shp.y[i]+y >= 0  && board[shp.x[i]+x][shp.y[i]+y] == '.')==false ) // the block is in board range and unoccupied
-	            return false;
-	    }
-//	}
+    for (int i=0; i<5; i++) {
+	    if ((shp.x[i]+x < 14 && shp.x[i]+x >= 0 && shp.y[i]+y <14 && shp.y[i]+y >= 0  && board[shp.x[i]+x][shp.y[i]+y] == '.')==false ) // the block is in board range and unoccupied
+	        return false;
+    }
     return true;
 }
+
 bool isLegalMove(shape shp, int x, int y, char player)
 {
-
-    int  firstStep = (player == 'A') ? first_step_flag_A : first_step_flag_B;
-    if(firstStep == 0)//is first step
-    {
-        if(isLegalFirst(shp, x, y, player) == true)// is first step
-        {
-            //printShape(shp);
- //           cout<<x<<", "<<y<<" player : "<<player<<endl;
- //           cout<<"FIRST!"<<endl;
+    int firstStep = (player == 'A') ? first_step_flag_A : first_step_flag_B;
+    if (firstStep == 0) {	//is first step
+        if (isLegalFirst(shp, x, y, player) == true)	// is first step
             return true;
-        }
         else
             return false;
     }
-	// cout << "in legal move" << endl;
-    if( isConnectedToShoulder(shp, x, y, player)==false || isTouchedBySelf(shp, x, y, player)==true || isSpare(shp, x, y, player) ==false ){
-        // cout << isConnectedToShoulder(shp, x, y, player) << ", " << isTouchedBySelf(shp, x, y, player) << ", " << isSpare(shp, x, y, player) << endl;
+
+    if( isConnectedToShoulder(shp, x, y, player)==false || isTouchedBySelf(shp, x, y, player)==true || isSpare(shp, x, y, player) ==false )
         return false;
-    }
     else
         return true;
-    // cout << isConnectedToShoulder(shp, x, y, player) << ", " << isTouchedBySelf(shp, x, y, player) << ", " << isSpare(shp, x, y, player) << endl;
+
     return false;
 }
+
 bool playerMove(shape shp, int shapeID, char player, int x, int y)
 {
-    //int x,y;
     char junk, cX, cY;
-    //printMap();
     first_step_pointer = (player == 'A')? &first_step_flag_A : &first_step_flag_B;
     pieces_pointer = (player == 'A')? pieces_A : pieces_B;
-
-    // cout << player << " <- flag: " << *first_step_pointer << endl;
-
-    // 1. check if piece alredy been used.
-     if (pieces_pointer[shapeID] == 0) {
-     	//cout << "shapeID: " << shapeID << " already on the board, choose other one." << endl;
+    // check if piece alredy been used.
+    if (pieces_pointer[shapeID] == 0)
      	return false;
-     } //else {
+    
+    // check if legal.
+	if(isLegalMove(shp, x, y, player)) {
+		for (int i=0; i<5; i++) 
+		    board[shp.x[i]+x][shp.y[i]+y] = player;
 
-    	// 2. check if this step is first step.
-//		if(player == 'A' && *first_step_pointer == 0 ) {	// first time.
-//	    	//cout << "player A must start from original point (4,4)." << endl;
-//	    	bool legalFirst = false;
-//	    	for(int i=0;i<shp.size; i++)
-//            {
-//                if(x+shp.x[i] == 4 && y+shp.y[i] == 4)
-//                {
-//                    legalFirst = true;
-//                }
-//            }
-//	    	return legalFirst;
-//	    } else if (player == 'B' && *first_step_pointer == 0 ) {
-//	    	//cout << "player B must start from original point (9,9)." << endl;
-//	    	bool legalFirst = false;
-//	    	for(int i=0;i<shp.size; i++)
-//            {
-//                if(x+shp.x[i] == 9 && y+shp.y[i] == 9)
-//                {
-//                    legalFirst = true;
-//                }
-//            }
-//	    	return legalFirst;
-//	    } else {
+		if (player == 'A')
+            first_step_flag_A = 1;
+        else
+            first_step_flag_B = 1;
 
-	    	// check if legal.
-		    if(isLegalMove(shp, x, y, player))
-		    {
-		        for(int i=0;i<5;i++)
-		        {
-		            board[shp.x[i]+x][shp.y[i]+y] = player;
-		        }
-		        if(player == 'A')
-                    first_step_flag_A = 1;
-                else
-                    first_step_flag_B = 1;
-		        //*first_step_pointer = 1;
-		        //system("cls");
-		        printMap();
-
-		        return true;
-		    }
-		    else
-		    {
-		        //cout<<"Illegal move!"<<endl;
-		        return false;
-		    }
-//	    }
- //    }
+		printMap();
+		return true;
+	}
+	else
+		return false;
 }
 
-bool checkpieces(int id, char player){
-
+bool checkpieces(int id, char player)
+{
 	// loop though all board.
 	shape selected;
     int counter  = 0;
+    
     if (player == 'A')
         selected = shapesA[id];
     else
         selected = shapesB[id];
 
-	for (int i = 0; i < 14; i++) {
-
-		for (int j = 0; j < 14; j++) {
-
+	for (int i=0; i<14; i++) {
+		for (int j=0; j<14; j++) {
 			// two flip.
-			for (int f = 0; f < 2; f++) {
-
+			for (int f=0; f<2; f++) {
 				if (f > 0) selected = flip(selected);
 
 				// and four direction.
-				for (int clockwise = 0; clockwise < 4; clockwise++)
-                {
-
+				for (int clockwise = 0; clockwise < 4; clockwise++) {
 					if (clockwise > 0) selected = turnClockwise(selected);
 
-					if(isLegalMove(selected, i, j, player))
-                    {
-						// if this piece can put => return true.
+					// if this piece can put => return true.
+					if(isLegalMove(selected, i, j, player)) 
 						return true;
-					}
 				}
 			}
 		}
 	}
 	return false; // if this piece can`t   => return false.
-
 }
 
-bool checkgame(char player){
+bool checkgame(char player)
+{
 	cout << "\n\nstart check...\n" << endl;
 
 	int counter = 0;
 	bool cannot_put_any_pieces = false;
-				//counter++;
     pieces_pointer = (player == 'A') ? pieces_A : pieces_B;
-	for(int i = 0;i < 21; i++)
-    {
-		if(pieces_pointer[i] == 1)
-        {
+	for (int i=0; i<21; i++) {
+		if (pieces_pointer[i] == 1)
 			counter++;
-		}
 	}
-	for(int i = 0;i < 21; i++)
-    {
-		if(pieces_pointer[i] == 1)
-		{
-			// cout << "call for "  << i << endl;1
+	for (int i=0; i<21; i++) {
+		if (pieces_pointer[i] == 1) {
  			if (checkpieces(i,player) == false)
-            {
                 cannot_put_any_pieces = true;
-              //  cout<<i<<", ";
-            }
             else
-            {
                 cannot_put_any_pieces = false;
-            }
 		}
 	}
 	if (counter == 0 || cannot_put_any_pieces) {
@@ -379,65 +251,49 @@ bool checkgame(char player){
 		cout << "| " << player << "You have no more pieces or you can`t place any more.\n|" << endl;
 		cout<<counter<<endl;
 		return false;
-	} else {
+	}
+	else {
 		cout << "|--------------------------------- \n|" << endl;
 		cout << "| " << player << ": " << counter << " pieces left. Keep going.\n|" << endl;
 		return true;
 	}
 	return true;
 }
-bool checkgameClear(char player){
-	//cout << "\n\nstart check...\n" << endl;
+
+bool checkgameClear(char player)
+{
 	int counter = 0;
 	bool cannot_put_any_pieces = false;
-				//counter++;
     pieces_pointer = (player == 'A') ? pieces_A : pieces_B;
-	for(int i = 0;i < 21; i++)
-    {
-		if(pieces_pointer[i] == 1)
-        {
+	for (int i=0; i<21; i++) {
+		if (pieces_pointer[i] == 1)
 			counter++;
-		}
 	}
-	for(int i = 0;i < 21; i++)
-    {
-		if(pieces_pointer[i] == 1)
-		{
-			// cout << "call for "  << i << endl;1
- 			if (checkpieces(i,player) == false)
-            {
+	for (int i=0; i<21; i++) {
+		if (pieces_pointer[i] == 1) {
+			if (checkpieces(i,player) == false)
                 cannot_put_any_pieces = true;
-              //  cout<<i<<", ";
-            }
             else
-            {
                 cannot_put_any_pieces = false;
-            }
 		}
 	}
-	if (counter == 0 || cannot_put_any_pieces) {
-		//cout << "|--------------------------------- \n|" << endl;
-		//cout << "| " << player << "You have no more pieces or you can`t place any more.\n|" << endl;
-		//cout<<counter<<endl;
+	if (counter == 0 || cannot_put_any_pieces) 
 		return false;
-	} else {
-		//cout << "|--------------------------------- \n|" << endl;
-		//cout << "| " << player << ": " << counter << " pieces left. Keep going.\n|" << endl;
+	else 
 		return true;
-	}
+
 	return true;
 }
 
 void init()
 {
-    for(int i=0;i<14;i++)
-    {
-        for(int j=0;j<14;j++)
+    for (int i=0; i<14; i++) 
+        for (int j=0; j<14; j++)
             board[i][j] = '.';
-    }
+    
     board[4][4] = 'A';
     board[9][9] = 'B';
-    for (int i = 0; i < 21; i++){
+    for (int i=0; i<21; i++) {
     	pieces_A[i] = 1;
     	pieces_B[i] = 1;
     }
@@ -452,7 +308,6 @@ void init()
 
 void command()
 {
-
     // string cmd="E";
     int instr;
     int instr_counter = 0;
@@ -464,17 +319,13 @@ void command()
     first_step_pointer = &first_step_flag_A;
 
     int endCounter = 0;
-    while(true)
-    {
+    while (true) {
     	cout << endl;
-        //system("cls");
         player = (turn)?'A':'B';
         pieces_pointer = (player == 'A')? pieces_A : pieces_B;
-        // cout<<char('0'-1);
-
+  
         // check if player still have move to implement.
-        if(endCounter == 2)
-        {
+        if (endCounter == 2) {
             cout<<"Game is ended."<<endl;
             return;
         }
@@ -482,17 +333,18 @@ void command()
             isSelect = false;
             turn = !turn;
             endCounter++;
-        } else {
+        }
+        else {
             endCounter = 0;
 	        cout << "| [instruction #" << instr_counter << "] you can press 1~7:" <<"\n|\n";
 	        cout << "|\t1) Select Shape\n|\t2) Flip\n|\t3) Turn_clockwise\n|\t4) player_Move\n|\t5) Print_map\n|\t6) List_shapes\n|\t7) check condition\n|\t999) EXIT\n|\n";
 	        cout << "|--------------------------------- " << endl;
 	        cout << " Blockus >> ";
-	        cin>>instr;
-	        if(instr == 999)
+	        
+	        cin >> instr;
+	        if (instr == 999)
 	            break;
-	        if(instr == 1)		// select shape.
-	        {
+	        if (instr == 1) {		// select shape.
 	            isSelect = true;
 	            cout<<"shape index:";
 	            int tmpID;
@@ -502,7 +354,8 @@ void command()
 	            	if (pieces_pointer[tmpID] == 0) {
 	            		cout << "shapeID: " << tmpID << " already on the board, choose other one." << endl;
 	            		continue;
-	            	} else {
+	            	}
+	            	else {
 	            	    shapeID = tmpID;
 			            if(player == 'A')
 			                selected = shapesA[shapeID];
@@ -510,117 +363,90 @@ void command()
 			                selected = shapesB[shapeID];
 			            printShape(selected);
 	            	}
-	            } else {
+	            }
+	            else {
 	            	cout << "no this index! re do instruction!." << endl;
 	            	continue;
 	            }
 	        }
-	        else if(instr == 2)	// Flip
-	        {
-	        	if(isSelect == false)
-	        	{
-	        		cout<<"Please Select a shape."<<endl;
+	        else if (instr == 2) {	// Flip
+	        	if (isSelect == false) {
+	        		cout << "Please Select a shape." << endl;
 	                continue;
 	        	}
 	            selected = flip(selected);
 	            printShape(selected);
 	        }
-	        else if(instr == 3) // Turn
-	        {
+	        else if (instr == 3) { // Turn
 	        	if (isSelect == false) {
-	        		cout<<"Please Select a shape."<<endl;
+	        		cout << "Please Select a shape." << endl;
 	                continue;
 	        	}
 	            selected = turnClockwise(selected);
 	            printShape(selected);
 	        }
-	        else if(instr == 4) //player_move.
-	        {
-	            cout<<"shapeID:"<<shapeID<<endl;
+	        else if (instr == 4) { //player_move.
+	            cout << "shapeID:" << shapeID << endl;
 	            printMap();
-	            if(isSelect == false)//Hasn't select yet
-	            {
-	                cout<<"Please Select a shape."<<endl;
+	            if (isSelect == false) {	//Hasn't select yet
+	                cout << "Please Select a shape." << endl;
 	                continue;
-//	                cout<<"shape index:";
-//	                cin >> shapeID;
-//	                if (chackindex(shapeID)) {
-//		                if(player == 'A')
-//		                    selected = shapesA[shapeID];
-//		                else
-//		                    selected = shapesB[shapeID];
-//	                } else {
-//	                	cout << "no this index! re do instruction!." << endl;
-//	                	continue;
-//	                }
 	            }
 	            printShape(selected);
+
 	            int x, y;
-                cout<< "[ " << player << "'s turn ] input x, y:";
+                cout << "[ " << player << "'s turn ] input x, y:";
                 cin >> x >> y;
 	            legalMove = playerMove(selected, shapeID, player, x, y);
-	            if(legalMove == true)
-	            {
+	            if (legalMove == true) {
 	                pieces_pointer[shapeID] = 0;
 	            	instr_counter++;
 	                isSelect = false;
 	                turn = !turn;
 	            }
-
 	        }
-	        else if(instr == 5)	//map.
-	        {
+	        else if (instr == 5) {	//map.
 	            printMap();
 	        }
-	        else if(instr == 6)	//list shape.
-	        {
+	        else if (instr == 6) {	//list shape.
 	            listShapes(player);
 	        }
 	        else if (instr == 7) {
 	        	checkgame(player);
 	        }
-	        else
-	        {
+	        else {
 	            cout<<"Not a command."<<endl;
 	        }
-	        // cout<<"\nInput a 1~7 num to continue:";
-	        // cin>>junk;
 	    }
     }
 
 }
+
 void autoPlace(int id, char player)
 {
     shape selected;
     int counter  = 0;
-    if(player == 'A')
+    if (player == 'A')
         selected = shapesA[id];
     else
         selected = shapesB[id];
 
-	for (int i = 0; i < 14; i++) {
-
-		for (int j = 0; j < 14; j++) {
-
+	for (int i=0; i<14; i++) {
+		for (int j=0; j<14; j++) {
 			// two flip.
-			for (int f = 0; f < 2; f++) {
-
+			for (int f=0; f<2; f++) {
 				if (f > 0) selected = flip(selected);
 
 				// and four direction.
-				for (int clockwise = 0; clockwise < 4; clockwise++)
-                {
-
+				for (int clockwise = 0; clockwise < 4; clockwise++) {
 					if (clockwise > 0) selected = turnClockwise(selected);
 
-					if(isLegalMove(selected, i, j, player))
-                    {
+					if (isLegalMove(selected, i, j, player)) {
 						// if this piece can put => return true.
 						playerMove(selected, id, player, i, j);
 						printMap();
 						return ;
 					}
-
 				}
 			}
 		}
@@ -630,45 +456,45 @@ void autoPlace(int id, char player)
 
 void autoPlay(char player)
 {
-    if(checkgameClear(player) == false)
+    if (checkgameClear(player) == false)
         return;
+
     //init
     pieces_pointer = (player == 'A') ? pieces_A : pieces_B;
     vector <shape> autoShape = (player == 'A') ? shapesA : shapesB;
     shape selected;
+
     //select a shape
     int shapeID = rand()%21;
-    while(pieces_pointer[shapeID] == 0 || checkpieces(shapeID, player) == false ) // shape is unavailable
-    {                                                                             // or shape can't be placed
+    // shape is unavailable or shape can't be placed
+    while (pieces_pointer[shapeID] == 0 || checkpieces(shapeID, player) == false) 
         shapeID = rand()%21;
-    }
     selected = autoShape[shapeID];
-    //cout<<"shapeID:"<<shapeID<<endl;
+
     //rand flip
-    if(rand()%2 == 1)
+    if (rand()%2 == 1)
         selected = flip(selected);
+
     //rand turn
     int turn = rand()%4;
-    for(int i=0;i<turn;i++)
+    for (int i=0; i<turn; i++)
         selected = turnClockwise(selected);
+
     //rand place
     int x = rand()%14, y = rand()%14;
     int struggle = 196;
-    while(playerMove(selected, shapeID, player, x, y) == false ) // move is illegal
-    {
-        struggle -- ;
-        if(struggle == 0)
+    while (playerMove(selected, shapeID, player, x, y) == false) { // move is illegal
+        struggle--;
+        if (struggle == 0)
         {
             autoPlace(shapeID, player);
             break;
         }
-        //cout<<struggle
         x = rand()%14;
         y = rand()%14;
     }
     pieces_pointer[shapeID] = 0;
-    cout<<player<<"'s step\n^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"<<endl;
-    //printMap();
+    cout << player << "'s step\n^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^" << endl;
     return;
 }
 
@@ -678,22 +504,18 @@ void autoGame()
     char player = (turn == 0) ? 'A' : 'B';
     first_step_pointer = (player == 'A')? &first_step_flag_A: &first_step_flag_B;
     pieces_pointer = (player == 'A') ? pieces_A : pieces_B;
-    // cout << "player:" << player << " go first" << endl;
     string junk;
-    while(checkgameClear('A') == true || checkgameClear('B') == true)
-    {
+    while (checkgameClear('A') == true || checkgameClear('B') == true) {
         pieces_pointer = (player == 'A') ? pieces_A : pieces_B;
         autoPlay(player);
         turn = !turn;
-        cin>>junk;
+        cin >> junk;
         player = (turn == 0) ? 'A' : 'B';
     }
 }
 
 void PK()
 {
-
-    // string cmd="E";
     int instr;
     int instr_counter = 0;
     int shapeID, x, y;
@@ -703,225 +525,196 @@ void PK()
     bool turn = true, isSelect = false;
     first_step_pointer = &first_step_flag_A;
     int endCounter = 0;
-    while(true)
-    {
-        if(turn == 0)
-        {
+    while (true) {
+        if (turn == 0) {
             autoPlay('B');
             turn = !turn;
             continue;
         }
     	cout << endl;
-        //system("cls");
         player = (turn)?'A':'B';
         pieces_pointer = (player == 'A')? pieces_A : pieces_B;
-        // cout<<char('0'-1);
-
+    
         // check if player still have move to implement.
-        if(endCounter == 2)
-        {
-            cout<<"Game is ended."<<endl;
+        if (endCounter == 2) {
+            cout << "Game is ended." << endl;
             return;
         }
         if (checkgame(player) == false) {
             isSelect = false;
             turn = !turn;
             endCounter++;
-        } else {
+        }
+        else {
             endCounter = 0;
 	        cout << "| [instruction #" << instr_counter << "] you can press 1~7:" <<"\n|\n";
 	        cout << "|\t1) Select Shape\n|\t2) Flip\n|\t3) Turn_clockwise\n|\t4) player_Move\n|\t5) Print_map\n|\t6) List_shapes\n|\t7) check condition\n|\t999) EXIT\n|\n";
 	        cout << "|--------------------------------- " << endl;
 	        cout << " Blockus >> ";
-	        cin>>instr;
-	        if(instr == 999)
+	        
+	        cin >> instr;
+	        if (instr == 999)
 	            break;
-	        if(instr == 1)		// select shape.
-	        {
+	        if (instr == 1) {		// select shape.
 	            isSelect = true;
-	            cout<<"shape index:";
+	            cout << "shape index:";
 	            int tmpID;
-	            cin>>tmpID;
+	            cin >> tmpID;
 
 	            if (chackindex (tmpID)) {
 	            	if (pieces_pointer[tmpID] == 0) {
 	            		cout << "shapeID: " << tmpID << " already on the board, choose other one." << endl;
 	            		continue;
-	            	} else {
+	            	}
+	            	else {
 	            	    shapeID = tmpID;
 
-			            if(player == 'A')
+			            if (player == 'A')
 			                selected = shapesA[shapeID];
 			            else
 			                selected = shapesB[shapeID];
 			            printShape(selected);
 	            	}
-	            } else {
+	            }
+	            else {
 	            	cout << "no this index! re do instruction!." << endl;
 	            	continue;
 	            }
 	        }
-	        else if(instr == 2)	// Flip
-	        {
+	        else if (instr == 2) {	// Flip
 	            selected = flip(selected);
 	            printShape(selected);
 	        }
-	        else if(instr == 3) // Turn
-	        {
+	        else if (instr == 3) { // Turn
 	            selected = turnClockwise(selected);
 	            printShape(selected);
 	        }
-	        else if(instr == 4) //player_move.
-	        {
-	            cout<<"shapeID:"<<shapeID<<endl;
+	        else if (instr == 4) { //player_move.
+	            cout << "shapeID:" << shapeID << endl;
 	            printMap();
-	            if(isSelect == false)//Hasn't select yet
-	            {
+	            if (isSelect == false) {	//Hasn't select yet
 	                cout<<"Please Select a shape."<<endl;
 	                continue;
-//	                cout<<"shape index:";
-//	                cin >> shapeID;
-//	                if (chackindex(shapeID)) {
-//		                if(player == 'A')
-//		                    selected = shapesA[shapeID];
-//		                else
-//		                    selected = shapesB[shapeID];
-//	                } else {
-//	                	cout << "no this index! re do instruction!." << endl;
-//	                	continue;
-//	                }
 	            }
 	            printShape(selected);
+
 	            int x, y;
-                cout<< "[ " << player << "'s turn ] input x, y:";
+                cout << "[ " << player << "'s turn ] input x, y:";
                 cin >> x >> y;
 	            legalMove = playerMove(selected, shapeID, player, x, y);
-	            if(legalMove == true)
-	            {
+	            if (legalMove == true) {
 	                pieces_pointer[shapeID] = 0;
 
 	            	instr_counter++;
 	                isSelect = false;
 	                turn = !turn;
 	            }
-
 	        }
-	        else if(instr == 5)	//map.
-	        {
+	        else if (instr == 5) {	//map.
 	            printMap();
 	        }
-	        else if(instr == 6)	//list shape.
-	        {
+	        else if (instr == 6) {	//list shape.
 	            listShapes(player);
 	        }
 	        else if (instr == 7) {
 	        	checkgame(player);
 	        }
-	        else
-	        {
+	        else {
 	            cout<<"Not a command."<<endl;
 	        }
-	        // cout<<"\nInput a 1~7 num to continue:";
-	        // cin>>junk;
 	    }
     }
-
 }
+
 string winner()
 {
     int ALeft = 0, BLeft = 0;
-    for(int i=0;i<21;i++)
-    {
-        if(pieces_A[i] == 1)
+    for (int i=0; i<21; i++) {
+        if (pieces_A[i] == 1)
             ALeft += shapesA[i].size;
-        if(pieces_B[i] == 1)
+        if (pieces_B[i] == 1)
             BLeft += shapesB[i].size;
     }
-    if(ALeft - BLeft > biggestRange || BLeft - ALeft > biggestRange)
-    {
+
+    if (ALeft - BLeft > biggestRange || BLeft - ALeft > biggestRange) {
         biggestRange = ALeft - BLeft;
         bestA = ALeft;bestB = BLeft;
     }
-    cout<<ALeft<<" : "<<BLeft<<endl;
+    cout << ALeft << " : " << BLeft << endl;
     return (ALeft < BLeft) ? "A" : "B";
 }
+
 int main()
 {
     srand(time(NULL));
     bool flag = false;
     init();
     int mode;
-    cout<<"Game Start."<<endl<<endl;
-   // printf("Select mode: \n\"player\" / \"auto\" :");
+
+    cout << "Game Start." << endl << endl;
     cout << "|--------------------------------- |" << endl;
-    cout << "|   "<<endl<<"| Select Mode:" <<"\n|\n";
-    cout << "|\t1) Player\n|\t2) Auto\n|\t3) PK\n|\t4) See Priority Advantage\n|"<<endl;
+    cout << "|   " << endl << "| Select Mode:" << "\n|\n";
+    cout << "|\t1) Player\n|\t2) Auto\n|\t3) PK\n|\t4) See Priority Advantage\n|" << endl;
     cout << "|--------------------------------- \n";
-    cout<<"Blokus>>";
-    cin>>mode;
+    cout << "Blokus>>";
+    
+    cin >> mode;
     bool pause = false;
-    if(mode == 1)// player
-    {
+    if (mode == 1) {	// player
         command();
         pause = true;
     }
-    else if(mode == 2)
+    else if (mode == 2)
         autoGame();
-    else if(mode == 3)
+    else if (mode == 3)
         PK();
-    else
-    {
+    else {
         int winA = 0, winB = 0, games;
         cout << "|---------------------------------|" << endl;
-        cout << "|   "<<endl<<"| Select Number of Games:" <<"\n|\n";
-        cout << "|\t1) 1K\n|\t2) 10K\n|\t3) 100K\n|"<<endl;
+        cout << "|   "<<endl<<"| Select Number of Games:" << "\n|\n";
+        cout << "|\t1) 1K\n|\t2) 10K\n|\t3) 100K\n|" << endl;
         cout << "|--------------------------------- \n";
-        cout<<"Blokus>>";
-        cin>>games;
-        if(games == 1) games = 1000;
-        else if(games == 2) games = 10000;
-        else if(games == 3) games = 100000;
+        cout << "Blokus>>";
+        
+        cin >> games;
+        if (games == 1) games = 1000;
+        else if (games == 2) games = 10000;
+        else if (games == 3) games = 100000;
         bool change = false;
-        while(games--)
-        {
+        while (games--) {
             init();
             autoGame();
             cout<<games<<" to go....";
-            if(winner() =="A")
+            if (winner() =="A")
                 winA++;
             else
                 winB++;
             change = !change;
         }
-        cout << "|---------------------------------| " << endl;
-        cout << "|   "<<endl<<"| Result :" <<"\n|\n";
-        cout << "| "<<winA<<" : "<<winB<< "\n|"<<endl;
-        cout << "|   "<<endl<<"| Best Game :" <<"\n|\n";
-        cout << "| "<<bestA<<" : "<<bestA<< "\n|"<<endl;
-        cout << "|--------------------------------- \n";
 
+        cout << "|---------------------------------| " << endl;
+        cout << "|   " << endl << "| Result :" << "\n|\n";
+        cout << "| " << winA << " : " << winB << "\n|" << endl;
+        cout << "|   " << endl << "| Best Game :" << "\n|\n";
+        cout << "| " << bestA << " : " << bestA << "\n|" << endl;
+        cout << "|--------------------------------- \n";
     }
     string s = "";
 
-    while(s != "seeResult" && pause)
-    {
-        cout<<endl;
+    while (s != "seeResult" && pause) {
+        cout << endl;
         cout << "|--------------------------------- |" << endl;
-        cout << "|   "<<endl<<"| Please input string : seeResult" <<"\n";
-        cout << "|"<<endl;
+        cout << "|   " << endl << "| Please input string : seeResult" << "\n";
+        cout << "|" << endl;
         cout << "|--------------------------------- \nBlokus>>";
-        cin>>s;
+        cin >> s;
     }
 
     printMap();
     cout << "|--------------------------------- |" << endl;
-    cout << "|   "<<endl<<"| Player "<<winner()<<" wins." <<"\n";
-    cout << "|"<<endl;
+    cout << "|   " << endl << "| Player " << winner() << " wins." << "\n";
+    cout << "|" << endl;
     cout << "|--------------------------------- \nBlokus>>";
-//    cin>>s;
-//    listShapes('A');
-//    cout<<endl<<endl<<"----------------------"<<endl;
-//    listShapes('B');
     return 0;
 }
 
