@@ -32,7 +32,7 @@ int pieces_A[21] = {0};
 int pieces_B[21] = {0};
 int *pieces_pointer;
 
-void autoPlace(int id, char player)
+void autoPlace(int id, char player)     // If autoPlay fails to place THE shape by random, place it by brutal force
 {
     shape selected;
     int counter  = 0;
@@ -41,7 +41,7 @@ void autoPlace(int id, char player)
     else
         selected = shapesB[id];
 
-	for (int i=0; i<14; i++) {
+	for (int i=0; i<14; i++) {      //Brutal force placement
 		for (int j=0; j<14; j++) {
 			// two flip.
 			for (int f=0; f<2; f++) {
@@ -62,10 +62,10 @@ void autoPlace(int id, char player)
 	return;
 }
 
-void autoPlay(char player)
-{
-    if (checkgameClear(player) == false)
-        return;
+void autoPlay(char player)      //Play a round for Artificial Idiot. Random everything.
+{                               //Random pick a unplaced shape, random flip and turn, random place*
+    if (checkgameClear(player) == false)                                            //if random place fails too
+        return;                                                                     //many time, call autoPlace.
 
     //init
     pieces_pointer = (player == 'A') ? pieces_A : pieces_B;
@@ -95,7 +95,7 @@ void autoPlay(char player)
         struggle--;
         if (struggle == 0)
         {
-            autoPlace(shapeID, player);
+            autoPlace(shapeID, player);//Placing fails too many times, place the shape by brutal force.
             break;
         }
         x = rand()%14;
@@ -106,7 +106,7 @@ void autoPlay(char player)
     return;
 }
 
-void autoGame()
+void autoGame() //mode of two Artificial Idiots battle.
 {
     bool turn = 0;// A
     char player = (turn == 0) ? 'A' : 'B';

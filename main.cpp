@@ -15,18 +15,18 @@
 
 using namespace std;
 
-int bestA, bestB;
-vector<shape> shapes, shapesA, shapesB;
+int bestA, bestB;                       //to see the left blocks of A and B in the Best Game
+vector<shape> shapes, shapesA, shapesB; //Shapes
 
-int first_step_flag_A = 0;
+int first_step_flag_A = 0;              //To identify is it's the first round
 int first_step_flag_B = 0;
 int *first_step_pointer;
 
-int pieces_A[21] = {0};
+int pieces_A[21] = {0};                 //To identify the block is placed or not
 int pieces_B[21] = {0};
 int *pieces_pointer;
 
-void command()
+void command()                          //Playing mode of 2 human players.
 {
     // string cmd="E";
     int instr;
@@ -141,7 +141,7 @@ void command()
 
 }
 
-void PK()
+void PK()                               //Playing mode of human v.s. Artificial Idiot
 {
     int instr;
     int instr_counter = 0;

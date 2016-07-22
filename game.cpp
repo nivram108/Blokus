@@ -13,6 +13,14 @@
 #define YELLOW  ""      /* Yellow */
 #define MAGENTA ""      /* Magenta */
 
+//Some nouns definition :
+//    board : The game board. The playground.
+//    shape : The stuff looks like LEGO. The thing you place it on the board.
+//    piece : Same as shape. Different coder.
+//    shp   : Abbr for shape.
+//
+
+
 using namespace std;
 
 int biggestRange = 0, bestA, bestB;
@@ -30,8 +38,8 @@ int pieces_A[21] = {0};
 int pieces_B[21] = {0};
 int *pieces_pointer;
 
-void listShapes(char player){
-	pieces_pointer = (player == 'A'? pieces_A : pieces_B);
+void listShapes(char player){                               //List the shapes of the player that have not been
+	pieces_pointer = (player == 'A'? pieces_A : pieces_B);  //placed yet.
     if (player == 'A') {
         for (int i=0; i<21; i++) {
         	if (pieces_pointer[i] == 1) {
@@ -50,7 +58,7 @@ void listShapes(char player){
     }
 }
 
-void printMap()
+void printMap()         //Print out the current board status.
 {
 	cout << "|---------------------------------\n| [Map]" << endl;
     cout << "|\t            1111" << endl;
@@ -88,12 +96,12 @@ void printMap()
     cout << "|\n|---------------------------------\n" << endl;
 }
 
-bool checkindex(int i) {
+bool checkindex(int i) {                //......................
 	if ( i >= 0 && i <= 20) return true;
 	else return false;
 }
 
-bool isLegalFirst(shape shp, int x, int y, char player)
+bool isLegalFirst(shape shp, int x, int y, char player)//Check if it's first step and if it's a legal first step.
 {
     bool isLegal = false;
     if (player == 'A') {
@@ -116,11 +124,11 @@ bool isLegalFirst(shape shp, int x, int y, char player)
 }
 
 // connected to a shoulder
-bool isConnectedToShoulder(shape shp, int x, int y, char player)
+bool isConnectedToShoulder(shape shp, int x, int y, char player)    //To check if the block is connected so it's LEGAL
 {
 	for (int i=0; i<shp.size; i++) {	//each block of the shape
 	    for (int j=0; j<4; j++) { 	//each shoulder of the block
-	        if (board[shp.x[i]+x+shoulder[j][0]][shp.y[i]+y+shoulder[j][1]] == player && checkindex(shp.x[i]+x+shoulder[j][0])&& checkindex(shp.y[i]+y+shoulder[j][1]))
+	        if (board[shp.x[i]+x+shoulder[j][0]][shp.y[i]+y+shoulder[j][1]] == player && shp.x[i]+x+shoulder[j][0]>=0 && shp.x[i]+x+shoulder[j][0]<14&& shp.y[i]+y+shoulder[j][1]>=0 && shp.y[i]+y+shoulder[j][1]<14)
 	            return true;
 	    }
 	}
@@ -128,18 +136,18 @@ bool isConnectedToShoulder(shape shp, int x, int y, char player)
 }
 
 // touched by itself
-bool isTouchedBySelf(shape shp, int x, int y, char player)
+bool isTouchedBySelf(shape shp, int x, int y, char player)      //To check if the block is touched so it's ILLEGAL.
 {
 	for (int i=0; i<5; i++) {	//each block of the beside
 	    for (int j=0;j<4;j++) {	//each side of the block
-	        if (board[shp.x[i]+x+side[j][0]][shp.y[i]+y+side[j][1]] == player && checkindex(shp.x[i]+x+side[j][0]) && checkindex(shp.y[i]+y+side[j][1]))
+	        if (board[shp.x[i]+x+side[j][0]][shp.y[i]+y+side[j][1]] == player &&  shp.x[i]+x+shoulder[j][0]>=0 && shp.x[i]+x+shoulder[j][0]<14&& shp.y[i]+y+shoulder[j][1]>=0 && shp.y[i]+y+shoulder[j][1]<14)
 	          	return true;
         }
     }
     return false;
 }
 
-bool isSpare(shape shp, int x, int y, char player)
+bool isSpare(shape shp, int x, int y, char player)              //To check if the board is spare to place the block so it's LEGAL
 {
     for (int i=0; i<5; i++) {
 	    if ((shp.x[i]+x < 14 && shp.x[i]+x >= 0 && shp.y[i]+y <14 && shp.y[i]+y >= 0  && board[shp.x[i]+x][shp.y[i]+y] == '.')==false ) // the block is in board range and unoccupied
@@ -148,10 +156,10 @@ bool isSpare(shape shp, int x, int y, char player)
     return true;
 }
 
-bool isLegalMove(shape shp, int x, int y, char player)
-{
-    int firstStep = (player == 'A') ? first_step_flag_A : first_step_flag_B;
-    if (firstStep == 0) {	//is first step
+bool isLegalMove(shape shp, int x, int y, char player)      //To check the move is legal or not, that is,
+{                                                                           //It's Connected
+    int firstStep = (player == 'A') ? first_step_flag_A : first_step_flag_B;//It's not Touched
+    if (firstStep == 0) {	//is first step                                 //It's Spare to place
         if (isLegalFirst(shp, x, y, player) == true)	// is first step
             return true;
         else
@@ -166,8 +174,8 @@ bool isLegalMove(shape shp, int x, int y, char player)
     return false;
 }
 
-bool playerMove(shape shp, int shapeID, char player, int x, int y)
-{
+bool playerMove(shape shp, int shapeID, char player, int x, int y)      //Make a single move. Return true if
+{                                                                       //the move is success.
     char junk, cX, cY;
     first_step_pointer = (player == 'A')? &first_step_flag_A : &first_step_flag_B;
     pieces_pointer = (player == 'A')? pieces_A : pieces_B;
@@ -192,8 +200,8 @@ bool playerMove(shape shp, int shapeID, char player, int x, int y)
 		return false;
 }
 
-bool checkpieces(int id, char player)
-{
+bool checkpieces(int id, char player)//To check if there is any shape to place or not, that is,
+{                                    //is there any move for the player.
 	// loop though all board.
 	shape selected;
     int counter  = 0;
@@ -223,7 +231,7 @@ bool checkpieces(int id, char player)
 	return false; // if this piece can`t   => return false.
 }
 
-bool checkgame(char player)
+bool checkgame(char player)                 //To check if the game is ended.
 {
 	cout << "\n\nstart check...\n" << endl;
 	int counter = 0;
@@ -252,8 +260,8 @@ bool checkgame(char player)
 	}
 }
 
-bool checkgameClear(char player)
-{
+bool checkgameClear(char player)        //Checking game is ended or not, but without print anything.
+{                                       //the function is for AI.
 	int counter = 0;
 	bool cannot_put_any_pieces = true;
     pieces_pointer = (player == 'A') ? pieces_A : pieces_B;
@@ -273,8 +281,8 @@ bool checkgameClear(char player)
 		return true;
 }
 
-void init()
-{
+void init()                     //Initial the game.
+{                               //Create shapes and initial board and identifiers for placed shapes.
     for (int i=0; i<14; i++)
         for (int j=0; j<14; j++)
             board[i][j] = '.';
@@ -294,7 +302,7 @@ void init()
     shapesA = shapesB = shapes;
 }
 
-string winner()
+string winner()                 //To return the winner of the game.
 {
     int ALeft = 0, BLeft = 0;
     for (int i=0; i<21; i++) {
