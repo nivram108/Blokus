@@ -45,10 +45,10 @@ void autoPlace(int id, char player)
 		for (int j=0; j<14; j++) {
 			// two flip.
 			for (int f=0; f<2; f++) {
-				if (f > 0) selected = flip(selected);
+				if (f > 0) selected.flip();
 				// and four direction.
 				for (int clockwise = 0; clockwise < 4; clockwise++) {
-					if (clockwise > 0) selected = turnClockwise(selected);
+					if (clockwise > 0) selected.turnClockwise();
 					if (isLegalMove(selected, i, j, player)) {
 						// if this piece can put => return true.
 						playerMove(selected, id, player, i, j);
@@ -81,12 +81,12 @@ void autoPlay(char player)
 
     //rand flip
     if (rand()%2 == 1)
-        selected = flip(selected);
+        selected.flip();
 
     //rand turn
     int turn = rand()%4;
     for (int i=0; i<turn; i++)
-        selected = turnClockwise(selected);
+        selected.turnClockwise();
 
     //rand place
     int x = rand()%14, y = rand()%14;

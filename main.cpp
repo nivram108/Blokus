@@ -81,7 +81,7 @@ void command()
 			                selected = shapesA[shapeID];
 			            else
 			                selected = shapesB[shapeID];
-			            printShape(selected);
+			            selected.printShape();
 	            	}
 	            }
 	            else {
@@ -94,16 +94,16 @@ void command()
 	        		cout << "Please Select a shape." << endl;
 	                continue;
 	        	}
-	            selected = flip(selected);
-	            printShape(selected);
+	            selected.flip();
+	            selected.printShape();
 	        }
 	        else if (instr == 3) { // Turn
 	        	if (isSelect == false) {
 	        		cout << "Please Select a shape." << endl;
 	                continue;
 	        	}
-	            selected = turnClockwise(selected);
-	            printShape(selected);
+	            selected.turnClockwise();
+	            selected.printShape();
 	        }
 	        else if (instr == 4) { //player_move.
 	            cout << "shapeID:" << shapeID << endl;
@@ -112,7 +112,7 @@ void command()
 	                cout << "Please Select a shape." << endl;
 	                continue;
 	            }
-	            printShape(selected);
+	            selected.printShape();
 	            int x, y;
                 cout << "[ " << player << "'s turn ] input x, y:";
                 cin >> x >> y;
@@ -200,7 +200,7 @@ void PK()
 			                selected = shapesA[shapeID];
 			            else
 			                selected = shapesB[shapeID];
-			            printShape(selected);
+			            selected.printShape();
 	            	}
 	            }
 	            else {
@@ -209,12 +209,12 @@ void PK()
 	            }
 	        }
 	        else if (instr == 2) {	// Flip
-	            selected = flip(selected);
-	            printShape(selected);
+	            selected.flip();
+	            selected.printShape();
 	        }
 	        else if (instr == 3) { // Turn
-	            selected = turnClockwise(selected);
-	            printShape(selected);
+	            selected.turnClockwise();
+	            selected.printShape();
 	        }
 	        else if (instr == 4) { //player_move.
 	            cout << "shapeID:" << shapeID << endl;
@@ -223,7 +223,7 @@ void PK()
 	                cout<<"Please Select a shape."<<endl;
 	                continue;
 	            }
-	            printShape(selected);
+	            selected.printShape();
 
 	            int x, y;
                 cout << "[ " << player << "'s turn ] input x, y:";

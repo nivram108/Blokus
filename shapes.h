@@ -10,8 +10,9 @@ using namespace std;
 
 int shapeChoises[21];
 
-struct shape
+class shape
 {
+private:
     int size;
     int x[5];
     int y[5];
@@ -19,22 +20,18 @@ struct shape
     //the point to identify
     int uniX;
     int uniY;
+	bool isshape(int x, int y);
+	void normalizeshape();
 
+public:
     shape();
-	void set(string xStr, string yStr);
+	void set(int size, string xStr, string yStr);
+	void flip();
+	void turnClockwise();
+	void turnCounter_Clockwise();
+	void printShape();
+	void operator = (const shape& shp);
 };
-
-bool isshape(shape shp, int x, int y);
-
-shape flip(shape shp);
-
-shape turnClockwise(shape shp);
-
-shape turnCounter_Clockwise(shape shp);
-
-shape normalizeshape(shape shp);
-
-void printShape(shape shp);
 
 shape assignshape_00();
 shape assignshape_01();

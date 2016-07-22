@@ -36,7 +36,7 @@ void listShapes(char player){
         for (int i=0; i<21; i++) {
         	if (pieces_pointer[i] == 1) {
 				cout << i << ":" << endl;
-            	printShape(shapesA[i]);
+            	shapesA[i].printShape();
         	}
         }
     }
@@ -44,7 +44,7 @@ void listShapes(char player){
         for (int i=0; i<21; i++) {
         	if (pieces_pointer[i] == 1) {
 				cout << i << ":" << endl;
-            	printShape(shapesB[i]);
+            	shapesB[i].printShape();
         	}
         }
     }
@@ -207,11 +207,11 @@ bool checkpieces(int id, char player)
 		for (int j=0; j<14; j++) {
 			// two flip.
 			for (int f=0; f<2; f++) {
-				if (f > 0) selected = flip(selected);
+				if (f > 0) selected.flip();
 
 				// and four direction.
 				for (int clockwise = 0; clockwise < 4; clockwise++) {
-					if (clockwise > 0) selected = turnClockwise(selected);
+					if (clockwise > 0) selected.turnClockwise();
 
 					// if this piece can put => return true.
 					if(isLegalMove(selected, i, j, player))
