@@ -8,10 +8,10 @@
 #include <string>
 #include "shapes.h"
 
-#define RESET   ""
-#define RED     ""      /* Red */
-#define YELLOW  ""      /* Yellow */
-#define MAGENTA ""      /* Magenta */
+#define RESET   "\033[0m"
+#define RED     "\033[31m"      /* Red */
+#define YELLOW  "\033[33m"      /* Yellow */
+#define MAGENTA "\033[45m"      /* Magenta */
 
 using namespace std;
 
@@ -685,7 +685,7 @@ int main()
         cout << "|   " << endl << "| Result :" << "\n|\n";
         cout << "| " << winA << " : " << winB << "\n|" << endl;
         cout << "|   " << endl << "| Best Game :" << "\n|\n";
-        cout << "| " << bestA << " : " << bestA << "\n|" << endl;
+        cout << "| " << bestA << " : " << bestB << "\n|" << endl;
         cout << "|--------------------------------- \n";
     }
     string s = "";
