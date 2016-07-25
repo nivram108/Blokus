@@ -10,7 +10,7 @@ using namespace std;
 
 int shapeChoises[21];
 
-class shape
+class Shape
 {
 private:
     int size;
@@ -24,35 +24,38 @@ private:
 	void normalizeshape();
 
 public:
-    shape();
+    Shape();
 	void set(int size, string xStr, string yStr);
 	void flip();
 	void turnClockwise();
 	void turnCounter_Clockwise();
 	void printShape();
-	void operator = (const shape& shp);
+	void operator = (const Shape& shp);
+	int getSize();
+	int getPosX(const int& k);
+	int getPosY(const int& k);
 };
 
-shape assignshape_00();
-shape assignshape_01();
-shape assignshape_02();
-shape assignshape_03();
-shape assignshape_04();
-shape assignshape_05();
-shape assignshape_06();
-shape assignshape_07();
-shape assignshape_08();
-shape assignshape_09();
-shape assignshape_10();
-shape assignshape_11();
-shape assignshape_12();
-shape assignshape_13();
-shape assignshape_14();
-shape assignshape_15();
-shape assignshape_16();
-shape assignshape_17();
-shape assignshape_18();
-shape assignshape_19();
-shape assignshape_20();
+Shape assignshape_00();
+Shape assignshape_01();
+Shape assignshape_02();
+Shape assignshape_03();
+Shape assignshape_04();
+Shape assignshape_05();
+Shape assignshape_06();
+Shape assignshape_07();
+Shape assignshape_08();
+Shape assignshape_09();
+Shape assignshape_10();
+Shape assignshape_11();
+Shape assignshape_12();
+Shape assignshape_13();
+Shape assignshape_14();
+Shape assignshape_15();
+Shape assignshape_16();
+Shape assignshape_17();
+Shape assignshape_18();
+Shape assignshape_19();
+Shape assignshape_20();
 
 #endif

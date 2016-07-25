@@ -6,7 +6,7 @@
 #include "shapes.h"
 using namespace std;
 
-shape::shape() 
+Shape::Shape() 
 {
     this->size = 0;
     memset(this->x, 0, sizeof(this->x));
@@ -17,7 +17,7 @@ shape::shape()
     this->uniY = 0;
 }
 
-void shape::set(int size, string xStr, string yStr)
+void Shape::set(int size, string xStr, string yStr)
 {
     this->size = size;
 	for (int i=0; i<size; i++) {
@@ -26,7 +26,7 @@ void shape::set(int size, string xStr, string yStr)
 	}
 }
 
-bool shape::isshape(int x, int y)
+bool Shape::isshape(int x, int y)
 {
     for (int i=0; i<this->size; i++) {
         if (x==this->x[i] && y==this->y[i])
@@ -35,13 +35,13 @@ bool shape::isshape(int x, int y)
     return false;
 }
 
-void shape::flip()
+void Shape::flip()
 {
     for (int i=0; i<5; i++)    //flip
         this->x[i] = -1 * this->x[i];
 }
 
-void shape::turnClockwise()
+void Shape::turnClockwise()
 {
     int tmp;
     for (int i=0; i<5; i++) {
@@ -51,7 +51,7 @@ void shape::turnClockwise()
     }
 }
 
-void shape::turnCounter_Clockwise()
+void Shape::turnCounter_Clockwise()
 {
     int tmp;
     for (int i=0; i<5; i++) {
@@ -61,7 +61,7 @@ void shape::turnCounter_Clockwise()
     }
 }
 
-void shape::normalizeshape()
+void Shape::normalizeshape()
 {
     int minX = 0, minY = 0;
     for (int i=0; i<5; i++) {
@@ -77,7 +77,7 @@ void shape::normalizeshape()
 }
 
 
-void shape::printShape()
+void Shape::printShape()
 {
     this->normalizeshape();
     for (int i=0; i<5; i++) {
@@ -93,7 +93,7 @@ void shape::printShape()
         cout << endl;
     }
 }
-void shape::operator = (const shape& shp)
+void Shape::operator = (const Shape& shp)
 {
     this->size = shp.size;
     for (int i=0; i<5; i++) {
@@ -104,50 +104,65 @@ void shape::operator = (const shape& shp)
     this->uniY = shp.uniY;
 }
 
-shape assignshape_00()
+int Shape::getSize()
+{
+    return this->size;
+}
+
+int Shape::getPosX(const int& k)
+{
+    return this->x[k];
+}
+
+int Shape::getPosY(const int& k)
+{
+    return this->y[k];
+}
+
+Shape assignshape_00()
 {
     /*
     O
     */
-	shape tmp;
+	Shape tmp;
     tmp.set(1, "0", "0");
     return tmp;
 }
 
-shape assignshape_01()
+Shape assignshape_01()
 {
     /*
     OO
     */
-    shape tmp;
+    Shape tmp;
 	tmp.set(2, "01", "00");
     return tmp;
 }
 
-shape assignshape_02()
+Shape assignshape_02()
 {
 	/*
 	O
 	O
 	O
 	*/
-    shape tmp;
+    Shape tmp;
 	tmp.set(3, "012", "000");
     return tmp;
 }
 
-shape assignshape_03()
+Shape assignshape_03()
 {
     /*
     O
     OO
     */
-    shape tmp;
+    Shape tmp;
 	tmp.set(3, "011", "001");
     return tmp;
 }
 
-shape assignshape_04()
+Shape assignshape_04()
 {
     /*
     O
@@ -155,57 +170,57 @@ shape assignshape_04()
     O
     O
     */
-    shape tmp;
+    Shape tmp;
 	tmp.set(4, "0123", "0000");
     return tmp;
 }
 
-shape assignshape_05()
+Shape assignshape_05()
 {
     /*
     OOO
      O
     */
-    shape tmp;
+    Shape tmp;
 	tmp.set(4, "0001", "0121");
     return tmp;
 }
 
-shape assignshape_06()
+Shape assignshape_06()
 {
     /*
     OO
      OO
     */
-    shape tmp;
+    Shape tmp;
 	tmp.set(4, "0011", "0112");
     return tmp;
 }
 
-shape assignshape_07()
+Shape assignshape_07()
 {
     /*
     OO
     OO
     */
-    shape tmp;
+    Shape tmp;
 	tmp.set(4, "0011", "0101");
     return tmp;
 }
 
-shape assignshape_08()
+Shape assignshape_08()
 {
     /*
     O
     O
     OO
     */
-    shape tmp;
+    Shape tmp;
 	tmp.set(4, "0122", "0001");
     return tmp;
 }
 
-shape assignshape_09()
+Shape assignshape_09()
 {
     /*
     O
@@ -214,12 +229,12 @@ shape assignshape_09()
     O
     O
     */
-    shape tmp;
+    Shape tmp;
 	tmp.set(5, "01234", "00000");
     return tmp;
 }
 
-shape assignshape_10()
+Shape assignshape_10()
 {
     /*
     O
@@ -227,124 +242,124 @@ shape assignshape_10()
     O
     OO
     */
-    shape tmp;
+    Shape tmp;
 	tmp.set(5, "01233", "00001");
     return tmp;
 }
 
-shape assignshape_11()
+Shape assignshape_11()
 {
     /*
     O O
     OOO
     */
-    shape tmp;
+    Shape tmp;
 	tmp.set(5, "01110", "00122");
     return tmp;
 }
 
-shape assignshape_12()
+Shape assignshape_12()
 {
     /*
     OO
      O
      OO
     */
-    shape tmp;
+    Shape tmp;
 	tmp.set(5, "00122", "01112");
     return tmp;
 }
 
-shape assignshape_13()
+Shape assignshape_13()
 {
     /*
     OOO
      O
      O
     */
-    shape tmp;
+    Shape tmp;
 	tmp.set(5, "00012", "01211");
     return tmp;
 }
 
-shape assignshape_14()
+Shape assignshape_14()
 {
     /*
      O
     OOO
      O
     */
-    shape tmp;
+    Shape tmp;
 	tmp.set(5, "000/1", "01211"); //  '/' - '0' = -1
     return tmp;
 }
 
-shape assignshape_15()
+Shape assignshape_15()
 {
     /*
     OO
      OO
       O
     */
-    shape tmp;
+    Shape tmp;
 	tmp.set(5, "00112", "01122");
     return tmp;
 }
 
-shape assignshape_16()
+Shape assignshape_16()
 {
     /*
     O
     O
     OOO
     */
-    shape tmp;
+    Shape tmp;
 	tmp.set(5, "01222", "00012");
     return tmp;
 }
 
-shape assignshape_17()
+Shape assignshape_17()
 {
     /*
     O
     OOO
      O
     */
-    shape tmp;
+    Shape tmp;
 	tmp.set(5, "01112", "00121");
     return tmp;
 }
 
-shape assignshape_18()
+Shape assignshape_18()
 {
     /*
     OO
     OO
     O
     */
-    shape tmp;
+    Shape tmp;
 	tmp.set(5, "00112", "01010");
     return tmp;
 }
 
-shape assignshape_19()
+Shape assignshape_19()
 {
     /*
     OOOO
      O
     */
-    shape tmp;
+    Shape tmp;
 	tmp.set(5, "00001", "01231");
     return tmp;
 }
 
-shape assignshape_20()
+Shape assignshape_20()
 {
     /*
     OO
      OOo
     */
-    shape tmp;
+    Shape tmp;
 	tmp.set(5, "00111", "01123");
     return tmp;
 }

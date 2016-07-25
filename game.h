@@ -9,59 +9,65 @@
 #include <ctime>
 #include <fstream>
 #include <string>
+#include <cstring>
 #include "shapes.h"
-#include "game.h"
-
-#define RESET   ""
-#define RED     ""      /* Red */
-#define YELLOW  ""      /* Yellow */
-#define MAGENTA ""      /* Magenta */
-
 using namespace std;
 
-int biggestRange = 0, bestA, bestB;
-vector<shape> shapes, shapesA, shapesB;
-char board[14][14];
-char tmpBoard[14][14];
-int shoulder[4][2] = {{1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
-int side[4][2] = {{1, 0}, {0, 1}, {0, -1}, {-1, 0}};
+#define RESET   "\033[0m"
+#define RED     "\033[31m"      /* Red */
+#define YELLOW  "\033[33m"      /* Yellow */
+#define MAGENTA "\033[45m"      /* Magenta */
 
-int first_step_flag_A = 0;
-int first_step_flag_B = 0;
-int *first_step_pointer;
+class Game
+{
+private:
+    int biggestRange, bestA, bestB;
+    vector<Shape> shapes, shapesA, shapesB;
+    char board[14][14], tmpBoard[14][14];
 
-int pieces_A[21] = {0};
-int pieces_B[21] = {0};
-int *pieces_pointer;
+    int firstStepFlagA, firstStepFlagB;
+    int* firstStepPointer;
 
-void listShapes(char player);
+    int piecesA[21], piecesB[21];
+    int* piecesPointer;
 
-void printMap();
+    static const int shoulders[][2];
+    static const int sides[][2];
+    
+    //Check if it's first step and if it's a legal first step.
+    bool isLegalFirst(Shape shp, int x, int y, char player);
+    //To check if the block is connected so it's LEGAL
+    bool isConnectedToShoulder(Shape shp, int x, int y, char player);
+    //To check if the block is touched so it's ILLEGAL.
+    bool isTouchedBySelf(Shape shp, int x, int y, char player);
+    //To check if the board is spare to place the block so it's LEGAL
+    bool isSpare(Shape shp, int x, int y, char player);
 
-bool checkindex(int i);
+public:
+    Game();
+    
+    //Create shapes and initial board and identifiers for placed shapes.
+    void init();
+    //List the shapes of the player that have not been placed yet.
+    void listShapes(char player);
+    //Print out the current board status.
+    void printBoard();
+    //check if the selected shape index is between 0 and 20.
+    bool checkShapeID(int i);
+    //Make a single move. Return true if the move is success.
+    bool playerMove(Shape shp, int shapeID, char player, int x, int y);
+    //To check if the game is ended.
+    bool isGameEnd(char player);
+    //To return the winner of the game.
+    string winner();
 
-bool isLegalFirst(shape shp, int x, int y, char player);
-
-// connected to a shoulder
-bool isConnectedToShoulder(shape shp, int x, int y, char player);
-
-// touched by itself
-bool isTouchedBySelf(shape shp, int x, int y, char player);
-
-bool isSpare(shape shp, int x, int y, char player);
-
-bool isLegalMove(shape shp, int x, int y, char player);
-
-bool playerMove(shape shp, int shapeID, char player, int x, int y);
-
-bool checkpieces(int id, char player);
-
-bool checkgame(char player);
-
-bool checkgameClear(char player);
-
-void init();
-
-string winner();
+    //----------------------------AI's NEED--------------------------------//
+    //To check the move is legal or not, that is, Connected, not Touched and Spare to place.
+    bool isLegalMove(Shape shp, int x, int y, char player);
+    //To check if the shape can be place anywhere or not.
+    bool hasPlaceToPut(int id, char player);
+    //Checking game is ended or not, but without print anything. ( for AI )
+    bool checkGameEndAI(char player);
+};
 
 #endif

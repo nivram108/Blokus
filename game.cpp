@@ -6,43 +6,64 @@
 #include <ctime>
 #include <fstream>
 #include <string>
+#include <cstring>
 #include "shapes.h"
-
-#define RESET   ""
-#define RED     ""      /* Red */
-#define YELLOW  ""      /* Yellow */
-#define MAGENTA ""      /* Magenta */
-
-//Some nouns definition :
-//    board : The game board. The playground.
-//    shape : The stuff looks like LEGO. The thing you place it on the board.
-//    piece : Same as shape. Different coder.
-//    shp   : Abbr for shape.
-//
-
-
+#include "game.h"
 using namespace std;
 
-int biggestRange = 0, bestA, bestB;
-vector<shape> shapes, shapesA, shapesB;
-char board[14][14];
-char tmpBoard[14][14];
-int shoulder[4][2] = {{1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
-int side[4][2] = {{1, 0}, {0, 1}, {0, -1}, {-1, 0}};
+#define RESET   "\033[0m"
+#define RED     "\033[31m"      /* Red */
+#define YELLOW  "\033[33m"      /* Yellow */
+#define MAGENTA "\033[45m"      /* Magenta */
 
-int first_step_flag_A = 0;
-int first_step_flag_B = 0;
-int *first_step_pointer;
+//Some nouns definition :
+//  board : The game board. The playground.
+//  shape : The stuff looks like LEGO. The thing you place it on the board.
+//  piece : Same as shape. Different coder.
+//  shp   : Abbr for shape.
+//  block :
 
-int pieces_A[21] = {0};
-int pieces_B[21] = {0};
-int *pieces_pointer;
+const int Game::shoulders[][2] = {{1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
+const int Game::sides[][2] = {{1, 0}, {0, 1}, {0, -1}, {-1, 0}};
 
-void listShapes(char player){                               //List the shapes of the player that have not been
-	pieces_pointer = (player == 'A'? pieces_A : pieces_B);  //placed yet.
+Game::Game()
+{
+    biggestRange = 0;
+    firstStepFlagA = 0;
+    firstStepFlagB = 0;
+    memset(piecesA, 0, sizeof(piecesA));
+    memset(piecesB, 0, sizeof(piecesB));
+}
+
+//Initial the game.
+//Create shapes and initial board and identifiers for placed shapes.
+void Game::init()
+{
+    for (int i=0; i<14; i++)
+        for (int j=0; j<14; j++)
+            board[i][j] = '.';
+
+    board[4][4] = 'A';
+    board[9][9] = 'B';
+    for (int i=0; i<21; i++) {
+        piecesA[i] = 1;
+        piecesB[i] = 1;
+    }
+
+    shapes.push_back(assignshape_00());shapes.push_back(assignshape_01());shapes.push_back(assignshape_02());shapes.push_back(assignshape_03());shapes.push_back(assignshape_04());
+    shapes.push_back(assignshape_05());shapes.push_back(assignshape_06());shapes.push_back(assignshape_07());shapes.push_back(assignshape_08());shapes.push_back(assignshape_09());
+    shapes.push_back(assignshape_10());shapes.push_back(assignshape_11());shapes.push_back(assignshape_12());shapes.push_back(assignshape_13());shapes.push_back(assignshape_14());
+    shapes.push_back(assignshape_15());shapes.push_back(assignshape_16());shapes.push_back(assignshape_17());shapes.push_back(assignshape_18());shapes.push_back(assignshape_19());
+    shapes.push_back(assignshape_20());
+    shapesA = shapesB = shapes;
+}
+
+//List the shapes of the player that have not been placed yet.
+void Game::listShapes(char player){
+	piecesPointer = (player == 'A'? piecesA : piecesB);
     if (player == 'A') {
         for (int i=0; i<21; i++) {
-        	if (pieces_pointer[i] == 1) {
+        	if (piecesPointer[i] == 1) {
 				cout << i << ":" << endl;
             	shapesA[i].printShape();
         	}
@@ -50,7 +71,7 @@ void listShapes(char player){                               //List the shapes of
     }
     else {
         for (int i=0; i<21; i++) {
-        	if (pieces_pointer[i] == 1) {
+        	if (piecesPointer[i] == 1) {
 				cout << i << ":" << endl;
             	shapesB[i].printShape();
         	}
@@ -58,7 +79,8 @@ void listShapes(char player){                               //List the shapes of
     }
 }
 
-void printMap()         //Print out the current board status.
+//Print out the current board status.
+void Game::printBoard()
 {
 	cout << "|---------------------------------\n| [Map]" << endl;
     cout << "|\t            1111" << endl;
@@ -96,26 +118,28 @@ void printMap()         //Print out the current board status.
     cout << "|\n|---------------------------------\n" << endl;
 }
 
-bool checkindex(int i) {                //......................
+//check if the selected shape index is between 0 and 20.
+bool Game::checkShapeID(int i) {
 	if ( i >= 0 && i <= 20) return true;
 	else return false;
 }
 
-bool isLegalFirst(shape shp, int x, int y, char player)//Check if it's first step and if it's a legal first step.
+//Check if it's first step and if it's a legal first step.
+bool Game::isLegalFirst(Shape shp, int x, int y, char player)
 {
     bool isLegal = false;
     if (player == 'A') {
-        if (first_step_flag_A == 0) {	// is first
-            for (int i=0; i<shp.size; i++) {
-                if (x + shp.x[i] == 4 && y + shp.y[i] == 4)
+        if (firstStepFlagA == 0) {	// is first
+            for (int i=0; i<shp.getSize(); i++) {
+                if (x + shp.getPosX(i) == 4 && y + shp.getPosY(i) == 4)
                     return true;
             }
         }
     }
     else {
-        if (first_step_flag_B == 0) {	// is first
-            for (int i=0;i<shp.size;i++) {
-                if (x + shp.x[i] == 9 && y + shp.y[i] == 9)
+        if (firstStepFlagB == 0) {	// is first
+            for (int i=0;i<shp.getSize();i++) {
+                if (x + shp.getPosX(i) == 9 && y + shp.getPosY(i) == 9)
                 	return true;
             }
         }
@@ -123,43 +147,47 @@ bool isLegalFirst(shape shp, int x, int y, char player)//Check if it's first ste
     return false;
 }
 
-// connected to a shoulder
-bool isConnectedToShoulder(shape shp, int x, int y, char player)    //To check if the block is connected so it's LEGAL
+//connected to a shoulder
+//To check if the block is connected so it's LEGAL.
+bool Game::isConnectedToShoulder(Shape shp, int x, int y, char player)
 {
-	for (int i=0; i<shp.size; i++) {	//each block of the shape
+	for (int i=0; i<shp.getSize(); i++) {	//each block of the Shape
 	    for (int j=0; j<4; j++) { 	//each shoulder of the block
-	        if (board[shp.x[i]+x+shoulder[j][0]][shp.y[i]+y+shoulder[j][1]] == player && shp.x[i]+x+shoulder[j][0]>=0 && shp.x[i]+x+shoulder[j][0]<14&& shp.y[i]+y+shoulder[j][1]>=0 && shp.y[i]+y+shoulder[j][1]<14)
+	        if (board[shp.getPosX(i)+x+shoulders[j][0]][shp.getPosY(i)+y+shoulders[j][1]] == player && shp.getPosX(i)+x+shoulders[j][0]>=0 && shp.getPosX(i)+x+shoulders[j][0]<14&& shp.getPosY(i)+y+shoulders[j][1]>=0 && shp.getPosY(i)+y+shoulders[j][1]<14)
 	            return true;
 	    }
 	}
     return false;
 }
 
-// touched by itself
-bool isTouchedBySelf(shape shp, int x, int y, char player)      //To check if the block is touched so it's ILLEGAL.
+//touched by itself
+//To check if the block is touched so it's ILLEGAL.
+bool Game::isTouchedBySelf(Shape shp, int x, int y, char player)
 {
 	for (int i=0; i<5; i++) {	//each block of the beside
 	    for (int j=0;j<4;j++) {	//each side of the block
-	        if (board[shp.x[i]+x+side[j][0]][shp.y[i]+y+side[j][1]] == player &&  shp.x[i]+x+shoulder[j][0]>=0 && shp.x[i]+x+shoulder[j][0]<14&& shp.y[i]+y+shoulder[j][1]>=0 && shp.y[i]+y+shoulder[j][1]<14)
+	        if (board[shp.getPosX(i)+x+sides[j][0]][shp.getPosY(i)+y+sides[j][1]] == player &&  shp.getPosX(i)+x+shoulders[j][0]>=0 && shp.getPosX(i)+x+shoulders[j][0]<14&& shp.getPosY(i)+y+shoulders[j][1]>=0 && shp.getPosY(i)+y+shoulders[j][1]<14)
 	          	return true;
         }
     }
     return false;
 }
 
-bool isSpare(shape shp, int x, int y, char player)              //To check if the board is spare to place the block so it's LEGAL
+//To check if the board is spare to place the block so it's LEGAL.
+bool Game::isSpare(Shape shp, int x, int y, char player)
 {
     for (int i=0; i<5; i++) {
-	    if ((shp.x[i]+x < 14 && shp.x[i]+x >= 0 && shp.y[i]+y <14 && shp.y[i]+y >= 0  && board[shp.x[i]+x][shp.y[i]+y] == '.')==false ) // the block is in board range and unoccupied
+	    if ((shp.getPosX(i)+x < 14 && shp.getPosX(i)+x >= 0 && shp.getPosY(i)+y <14 && shp.getPosY(i)+y >= 0  && board[shp.getPosX(i)+x][shp.getPosY(i)+y] == '.')==false ) // the block is in board range and unoccupied
 	        return false;
     }
     return true;
 }
 
-bool isLegalMove(shape shp, int x, int y, char player)      //To check the move is legal or not, that is,
-{                                                                           //It's Connected
-    int firstStep = (player == 'A') ? first_step_flag_A : first_step_flag_B;//It's not Touched
-    if (firstStep == 0) {	//is first step                                 //It's Spare to place
+//To check the move is legal or not, that is, Connected, not Touched and Spare to place.
+bool Game::isLegalMove(Shape shp, int x, int y, char player)
+{
+    int firstStep = (player == 'A') ? firstStepFlagA : firstStepFlagB;
+    if (firstStep == 0) {	//is first step
         if (isLegalFirst(shp, x, y, player) == true)	// is first step
             return true;
         else
@@ -174,36 +202,38 @@ bool isLegalMove(shape shp, int x, int y, char player)      //To check the move 
     return false;
 }
 
-bool playerMove(shape shp, int shapeID, char player, int x, int y)      //Make a single move. Return true if
-{                                                                       //the move is success.
+//Make a single move. Return true if the move is success.
+bool Game::playerMove(Shape shp, int shapeID, char player, int x, int y)
+{
     char junk, cX, cY;
-    first_step_pointer = (player == 'A')? &first_step_flag_A : &first_step_flag_B;
-    pieces_pointer = (player == 'A')? pieces_A : pieces_B;
+    firstStepPointer = (player == 'A')? &firstStepFlagA : &firstStepFlagB;
+    piecesPointer = (player == 'A')? piecesA : piecesB;
     // check if piece alredy been used.
-    if (pieces_pointer[shapeID] == 0)
+    if (piecesPointer[shapeID] == 0)
      	return false;
 
     // check if legal.
 	if(isLegalMove(shp, x, y, player)) {
 		for (int i=0; i<5; i++)
-		    board[shp.x[i]+x][shp.y[i]+y] = player;
+		    board[shp.getPosX(i)+x][shp.getPosY(i)+y] = player;
 
 		if (player == 'A')
-            first_step_flag_A = 1;
+            firstStepFlagA = 1;
         else
-            first_step_flag_B = 1;
+            firstStepFlagB = 1;
 
-		printMap();
+		printBoard();
 		return true;
 	}
 	else
 		return false;
 }
 
-bool checkpieces(int id, char player)//To check if there is any shape to place or not, that is,
-{                                    //is there any move for the player.
+//To check if the shape can be place anywhere or not.
+bool Game::hasPlaceToPut(int id, char player)
+{
 	// loop though all board.
-	shape selected;
+	Shape selected;
     int counter  = 0;
 
     if (player == 'A')
@@ -228,28 +258,29 @@ bool checkpieces(int id, char player)//To check if there is any shape to place o
 			}
 		}
 	}
-	return false; // if this piece can`t   => return false.
+	return false; // if this piece can't   => return false.
 }
 
-bool checkgame(char player)                 //To check if the game is ended.
+//To check if the game is ended.
+bool Game::isGameEnd(char player)
 {
 	cout << "\n\nstart check...\n" << endl;
 	int counter = 0;
 	bool cannot_put_any_pieces = true;
-    pieces_pointer = (player == 'A') ? pieces_A : pieces_B;
+    piecesPointer = (player == 'A') ? piecesA : piecesB;
 	for (int i=0; i<21; i++) {
-		if (pieces_pointer[i] == 1)
+		if (piecesPointer[i] == 1)
 			counter++;
 	}
 	for (int i=0; i<21; i++) {
-		if (pieces_pointer[i] == 1) {
- 			if (checkpieces(i,player) == true)// can place
+		if (piecesPointer[i] == 1) {
+ 			if (hasPlaceToPut(i,player) == true)// can place
                 cannot_put_any_pieces = false;// can place
 		}
 	}
 	if (cannot_put_any_pieces == true) { // can't place, end.
 		cout << "|--------------------------------- \n|" << endl;
-		cout << "| " << player << "You have no more pieces or you can`t place any more.\n|" << endl;
+		cout << "| " << player << "You have no more pieces or you can't place any more.\n|" << endl;
 		cout<<counter<<endl;
 		return false;//end
 	}
@@ -260,18 +291,19 @@ bool checkgame(char player)                 //To check if the game is ended.
 	}
 }
 
-bool checkgameClear(char player)        //Checking game is ended or not, but without print anything.
-{                                       //the function is for AI.
+//Checking game is ended or not, but without print anything. ( for AI )
+bool Game::checkGameEndAI(char player)
+{
 	int counter = 0;
 	bool cannot_put_any_pieces = true;
-    pieces_pointer = (player == 'A') ? pieces_A : pieces_B;
+    piecesPointer = (player == 'A') ? piecesA : piecesB;
 	for (int i=0; i<21; i++) {
-		if (pieces_pointer[i] == 1)
+		if (piecesPointer[i] == 1)
 			counter++;
 	}
 	for (int i=0; i<21; i++) {
-		if (pieces_pointer[i] == 1) {
-			if (checkpieces(i,player) == true)
+		if (piecesPointer[i] == 1) {
+			if (hasPlaceToPut(i,player) == true)
                 cannot_put_any_pieces = false;
 		}
 	}
@@ -281,35 +313,15 @@ bool checkgameClear(char player)        //Checking game is ended or not, but wit
 		return true;
 }
 
-void init()                     //Initial the game.
-{                               //Create shapes and initial board and identifiers for placed shapes.
-    for (int i=0; i<14; i++)
-        for (int j=0; j<14; j++)
-            board[i][j] = '.';
-
-    board[4][4] = 'A';
-    board[9][9] = 'B';
-    for (int i=0; i<21; i++) {
-    	pieces_A[i] = 1;
-    	pieces_B[i] = 1;
-    }
-
-    shapes.push_back(assignshape_00());shapes.push_back(assignshape_01());shapes.push_back(assignshape_02());shapes.push_back(assignshape_03());shapes.push_back(assignshape_04());
-    shapes.push_back(assignshape_05());shapes.push_back(assignshape_06());shapes.push_back(assignshape_07());shapes.push_back(assignshape_08());shapes.push_back(assignshape_09());
-    shapes.push_back(assignshape_10());shapes.push_back(assignshape_11());shapes.push_back(assignshape_12());shapes.push_back(assignshape_13());shapes.push_back(assignshape_14());
-    shapes.push_back(assignshape_15());shapes.push_back(assignshape_16());shapes.push_back(assignshape_17());shapes.push_back(assignshape_18());shapes.push_back(assignshape_19());
-    shapes.push_back(assignshape_20());
-    shapesA = shapesB = shapes;
-}
-
-string winner()                 //To return the winner of the game.
+//To return the winner of the game.
+string Game::winner()
 {
     int ALeft = 0, BLeft = 0;
     for (int i=0; i<21; i++) {
-        if (pieces_A[i] == 1)
-            ALeft += shapesA[i].size;
-        if (pieces_B[i] == 1)
-            BLeft += shapesB[i].size;
+        if (piecesA[i] == 1)
+            ALeft += shapesA[i].getSize();
+        if (piecesB[i] == 1)
+            BLeft += shapesB[i].getSize();
     }
 
     if (ALeft - BLeft > biggestRange || BLeft - ALeft > biggestRange) {
