@@ -50,14 +50,13 @@ void autoPlace(int id, char player)
 //Play a round for Artificial Idiot. Random everything.
 //Random pick a unplaced shape, random flip and turn, random place*
 //If random place fails too many time, call autoPlace.
-void autoPlay(char player)      
+void autoPlay(char player)
 {
     if (checkGameEndAI(player) == false)
         return;
 
     //init
     piecesPointer = (player == 'A') ? piecesA : piecesB;
-    vector <Shape> autoShape = (player == 'A') ? shapesA : shapesB;
     Shape selected;
 
     //select a shape
@@ -65,8 +64,7 @@ void autoPlay(char player)
     // shape is unavailable or shape can't be placed
     while (piecesPointer[shapeID] == 0 || hasPlaceToPut(shapeID, player) == false)
         shapeID = rand()%21;
-    selected = autoShape[shapeID];
-
+    selected = shapes[shapeID];
     //rand flip
     if (rand()%2 == 1)
         selected.flip();
@@ -78,14 +76,7 @@ void autoPlay(char player)
 
     //rand place
     int x = rand()%14, y = rand()%14;
-    int struggle = 196;
     while (playerMove(selected, shapeID, player, x, y) == false) { // move is illegal
-        struggle--;
-        if (struggle == 0)
-        {
-            autoPlace(shapeID, player);//Placing fails too many times, place the shape by brutal force.
-            break;
-        }
         x = rand()%14;
         y = rand()%14;
     }
