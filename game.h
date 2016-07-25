@@ -28,7 +28,7 @@ private:
     int firstStepFlagA, firstStepFlagB;
 
     //list of whether the piece is used(true) or not(false)
-    bool piecesUseA[21], piecesB[21];
+    bool piecesUseA[21], piecesUseB[21];
     bool* piecesUsePointer;
 
     static const int shoulders[][2];
