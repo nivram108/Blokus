@@ -35,13 +35,13 @@ private:
     static const int sides[][2];
     
     //Check if it's first step and if it's a legal first step.
-    bool isLegalFirst(Shape shp, int x, int y, char player);
+    bool isLegalFirst(Shape& shp, const int& x, const int& y, const char& player);
     //To check if the block is connected so it's LEGAL
-    bool isConnectedToShoulder(Shape shp, int x, int y, char player);
+    bool isConnectedToShoulder(Shape& shp, const int& x, const int& y, const char& player);
     //To check if the block is touched so it's ILLEGAL.
-    bool isTouchedBySelf(Shape shp, int x, int y, char player);
+    bool isTouchedBySelf(Shape& shp, const int& x, const int& y, const char& player);
     //To check if the board is spare to place the block so it's LEGAL
-    bool isSpare(Shape shp, int x, int y);
+    bool isSpare(Shape& shp, const int& x, const int& y);
 
 public:
     Game();
@@ -61,7 +61,7 @@ public:
     //check if the selected shape index is between 0 and 20.
     bool checkShapeID(const int& i);
     //Make a single move. Return true if the move is success.
-    bool playerMove(const Shape& shp, const int& shapeID, const char& player, const int& x, const int& y);
+    bool playerMove(Shape& shp, const int& shapeID, const char& player, const int& x, const int& y);
     //To check if the game is ended.
     bool isGameEnd(const char& player);
     //To return the winner of the game.
@@ -69,7 +69,7 @@ public:
 
     //----------------------------AI's NEED--------------------------------//
     //To check the move is legal or not, that is, Connected, not Touched and Spare to place.
-    bool isLegalMove(const Shape& shp, const int& x, const int& y, const char& player);
+    bool isLegalMove(Shape& shp, const int& x, const int& y, const char& player);
     //To check if the shape can be place anywhere or not.
     bool hasPlaceToPut(const int& id, const char& player);
     //Checking game is ended or not, but without print anything. ( for AI )

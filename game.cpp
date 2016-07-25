@@ -59,21 +59,21 @@ void Game::init()
 }
 
 //Set all the pointers to the assigned player's
-void setPlayer(const char& player)
+void Game::setPlayer(const char& player)
 {
-    piecesUsePointer = (player == 'A')? this->piecesUseA: this->piecesUseB;
+    this->piecesUsePointer = (player == 'A')? this->piecesUseA: this->piecesUseB;
 }
 
 //Check if the selected piece used(true) or not(false)
-bool isPieceUse(const int& k)
+bool Game::isPieceUse(const int& k)
 {
-    return piecesUsePointer[k];
+    return this->piecesUsePointer[k];
 }
 
 //Set the selected piece used
-void setPieceUse(const int& k)
+void Game::setPieceUse(const int& k)
 {
-    piecesUsePointer[k] = true;
+    this->piecesUsePointer[k] = true;
 }
 
 //List the shapes of the player that have not been placed yet.
@@ -143,7 +143,7 @@ bool Game::checkShapeID(const int& i) {
 }
 
 //Check if it's first step and if it's a legal first step.
-bool Game::isLegalFirst(const Shape& shp, const int& x, const int& y, const char& player)
+bool Game::isLegalFirst(Shape& shp, const int& x, const int& y, const char& player)
 {
     bool isLegal = false;
     if (player == 'A') {
@@ -167,7 +167,7 @@ bool Game::isLegalFirst(const Shape& shp, const int& x, const int& y, const char
 
 //connected to a shoulder
 //To check if the block is connected so it's LEGAL.
-bool Game::isConnectedToShoulder(const Shape& shp, const int& x, const int& y, const char& player)
+bool Game::isConnectedToShoulder(Shape& shp, const int& x, const int& y, const char& player)
 {
 	for (int i=0; i<shp.getSize(); i++) {	//each block of the Shape
 	    for (int j=0; j<4; j++) { 	//each shoulder of the block
@@ -180,7 +180,7 @@ bool Game::isConnectedToShoulder(const Shape& shp, const int& x, const int& y, c
 
 //touched by itself
 //To check if the block is touched so it's ILLEGAL.
-bool Game::isTouchedBySelf(const Shape& shp, const int& x, const int& y, const char& player)
+bool Game::isTouchedBySelf(Shape& shp, const int& x, const int& y, const char& player)
 {
 	for (int i=0; i<5; i++) {	//each block of the beside
 	    for (int j=0;j<4;j++) {	//each side of the block
@@ -192,7 +192,7 @@ bool Game::isTouchedBySelf(const Shape& shp, const int& x, const int& y, const c
 }
 
 //To check if the board is spare to place the block so it's LEGAL.
-bool Game::isSpare(const Shape& shp, const int& x, const int& y)
+bool Game::isSpare(Shape& shp, const int& x, const int& y)
 {
     for (int i=0; i<5; i++) {
 	    if ((shp.getPosX(i)+x < 14 && shp.getPosX(i)+x >= 0 && shp.getPosY(i)+y <14 && shp.getPosY(i)+y >= 0  && this->board[shp.getPosX(i)+x][shp.getPosY(i)+y] == '.')==false ) // the block is in board range and unoccupied
@@ -202,7 +202,7 @@ bool Game::isSpare(const Shape& shp, const int& x, const int& y)
 }
 
 //To check the move is legal or not, that is, Connected, not Touched and Spare to place.
-bool Game::isLegalMove(const Shape& shp, const int& x, const int& y, const char& player)
+bool Game::isLegalMove(Shape& shp, const int& x, const int& y, const char& player)
 {
     int firstStep = (player == 'A') ? this->firstStepFlagA : this->firstStepFlagB;
     if (firstStep == 0) {	//is first step
@@ -221,7 +221,7 @@ bool Game::isLegalMove(const Shape& shp, const int& x, const int& y, const char&
 }
 
 //Make a single move. Return true if the move is success.
-bool Game::playerMove(const Shape& shp, const int& shapeID, const char& player, const int& x, const int& y)
+bool Game::playerMove(Shape& shp, const int& shapeID, const char& player, const int& x, const int& y)
 {
     char junk, cX, cY;
     //this->piecesUsePointer = (player == 'A')? this->piecesUseA : this->piecesUseB;
