@@ -17,7 +17,7 @@ Shape::Shape()
     this->uniY = 0;
 }
 
-void Shape::set(int size, string xStr, string yStr)
+void Shape::set(const int& size, const string& xStr, const string& yStr)
 {
     this->size = size;
 	for (int i=0; i<size; i++) {
@@ -26,7 +26,7 @@ void Shape::set(int size, string xStr, string yStr)
 	}
 }
 
-bool Shape::isshape(int x, int y)
+bool Shape::isshape(const int& x, const int& y)
 {
     for (int i=0; i<this->size; i++) {
         if (x==this->x[i] && y==this->y[i])

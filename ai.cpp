@@ -16,25 +16,10 @@
 
 using namespace std;
 
-
-int biggestRange = 0, bestA, bestB;
-vector<shape> shapes, shapesA, shapesB;
-char board[14][14];
-char tmpBoard[14][14];
-int shoulder[4][2] = {{1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
-int side[4][2] = {{1, 0}, {0, 1}, {0, -1}, {-1, 0}};
-
-int first_step_flag_A = 0;
-int first_step_flag_B = 0;
-int *first_step_pointer;
-
-int pieces_A[21] = {0};
-int pieces_B[21] = {0};
-int *pieces_pointer;
-
-void autoPlace(int id, char player)     // If autoPlay fails to place THE shape by random, place it by brutal force
+// If autoPlay fails to place THE shape by random, place it by brutal force
+void autoPlace(int id, char player)
 {
-    shape selected;
+    Shape selected;
     int counter  = 0;
     if (player == 'A')
         selected = shapesA[id];
@@ -52,7 +37,7 @@ void autoPlace(int id, char player)     // If autoPlay fails to place THE shape 
 					if (isLegalMove(selected, i, j, player)) {
 						// if this piece can put => return true.
 						playerMove(selected, id, player, i, j);
-						printMap();
+						printBoard();
 						return ;
 					}
 				}
@@ -62,20 +47,23 @@ void autoPlace(int id, char player)     // If autoPlay fails to place THE shape 
 	return;
 }
 
-void autoPlay(char player)      //Play a round for Artificial Idiot. Random everything.
-{                               //Random pick a unplaced shape, random flip and turn, random place*
-    if (checkgameClear(player) == false)                                            //if random place fails too
-        return;                                                                     //many time, call autoPlace.
+//Play a round for Artificial Idiot. Random everything.
+//Random pick a unplaced shape, random flip and turn, random place*
+//If random place fails too many time, call autoPlace.
+void autoPlay(char player)      
+{
+    if (checkGameEndAI(player) == false)
+        return;
 
     //init
-    pieces_pointer = (player == 'A') ? pieces_A : pieces_B;
-    vector <shape> autoShape = (player == 'A') ? shapesA : shapesB;
-    shape selected;
+    piecesPointer = (player == 'A') ? piecesA : piecesB;
+    vector <Shape> autoShape = (player == 'A') ? shapesA : shapesB;
+    Shape selected;
 
     //select a shape
     int shapeID = rand()%21;
     // shape is unavailable or shape can't be placed
-    while (pieces_pointer[shapeID] == 0 || checkpieces(shapeID, player) == false)
+    while (piecesPointer[shapeID] == 0 || hasPlaceToPut(shapeID, player) == false)
         shapeID = rand()%21;
     selected = autoShape[shapeID];
 
@@ -101,20 +89,20 @@ void autoPlay(char player)      //Play a round for Artificial Idiot. Random ever
         x = rand()%14;
         y = rand()%14;
     }
-    pieces_pointer[shapeID] = 0;
+    piecesPointer[shapeID] = 0;
     cout << player << "'s step\n^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^" << endl;
     return;
 }
 
-void autoGame() //mode of two Artificial Idiots battle.
+//mode of two Artificial Idiots battle.
+void twoAIs()
 {
     bool turn = 0;// A
     char player = (turn == 0) ? 'A' : 'B';
-    first_step_pointer = (player == 'A')? &first_step_flag_A: &first_step_flag_B;
-    pieces_pointer = (player == 'A') ? pieces_A : pieces_B;
+    piecesPointer = (player == 'A') ? piecesA : piecesB;
     string junk;
-    while (checkgameClear('A') == true || checkgameClear('B') == true) {
-        pieces_pointer = (player == 'A') ? pieces_A : pieces_B;
+    while (checkGameEndAI('A') == true || checkGameEndAI('B') == true) {
+        piecesPointer = (player == 'A') ? piecesA : piecesB;
         autoPlay(player);
         turn = !turn;
         cin >> junk;

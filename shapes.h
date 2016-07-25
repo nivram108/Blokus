@@ -20,12 +20,12 @@ private:
     //the point to identify
     int uniX;
     int uniY;
-	bool isshape(int x, int y);
+	bool isshape(const int& x, const int& y);
 	void normalizeshape();
 
 public:
     Shape();
-	void set(int size, string xStr, string yStr);
+	void set(const int& size, const string& xStr, const string& yStr);
 	void flip();
 	void turnClockwise();
 	void turnCounter_Clockwise();
