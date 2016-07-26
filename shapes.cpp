@@ -4,9 +4,15 @@
 #include <cstdlib>
 #include <cstring>
 #include "shapes.h"
+//Some nouns definition :
+//  board : The game board. The playground.
+//  shape : The stuff looks like LEGO. The thing you place it on the board.
+//  piece : Same as shape. Different coder.
+//  shp   : Abbr for shape.
+//  block : smallest unit on the board. 1x1 square.
 using namespace std;
 
-Shape::Shape() 
+Shape::Shape()
 {
     this->size = 0;
     memset(this->x, 0, sizeof(this->x));

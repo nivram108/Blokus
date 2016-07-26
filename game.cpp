@@ -9,7 +9,7 @@
 #include <cstring>
 #include "shapes.h"
 #include "game.h"
-using namespace std;
+
 
 #define RESET   "\033[0m"
 #define RED     "\033[31m"      /* Red */
@@ -21,16 +21,16 @@ using namespace std;
 //  shape : The stuff looks like LEGO. The thing you place it on the board.
 //  piece : Same as shape. Different coder.
 //  shp   : Abbr for shape.
-//  block :
-
+//  block : smallest unit on the board. 1x1 square.
+using namespace std;
 const int Game::shoulders[][2] = {{1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
 const int Game::sides[][2] = {{1, 0}, {0, 1}, {0, -1}, {-1, 0}};
 
 Game::Game()
 {
     this->biggestRange = 0;
-    this->firstStepFlagA = 0;
-    this->firstStepFlagB = 0;
+    this->firstStepFlagA = false;
+    this->firstStepFlagB = false;
     memset(this->piecesUseA, 0, sizeof(this->piecesUseA));
     memset(this->piecesUseB, 0, sizeof(this->piecesUseB));
 }
@@ -55,7 +55,6 @@ void Game::init()
     this->shapes.push_back(assignshape_10()); this->shapes.push_back(assignshape_11()); this->shapes.push_back(assignshape_12()); this->shapes.push_back(assignshape_13()); this->shapes.push_back(assignshape_14());
     this->shapes.push_back(assignshape_15()); this->shapes.push_back(assignshape_16()); this->shapes.push_back(assignshape_17()); this->shapes.push_back(assignshape_18()); this->shapes.push_back(assignshape_19());
     this->shapes.push_back(assignshape_20());
-    this->shapesA = this->shapesB = this->shapes;
 }
 
 //Set all the pointers to the assigned player's
@@ -83,7 +82,7 @@ void Game::listShapes(const char& player){
         for (int i=0; i<21; i++) {
         	if (!this->piecesUseA[i]) {
 				cout << i << ":" << endl;
-            	this->shapesA[i].printShape();
+            	this->shapes[i].printShape();
         	}
         }
     }
@@ -91,7 +90,7 @@ void Game::listShapes(const char& player){
         for (int i=0; i<21; i++) {
         	if (!this->piecesUseB[i]) {
 				cout << i << ":" << endl;
-            	this->shapesB[i].printShape();
+            	this->shapes[i].printShape();
         	}
         }
     }
@@ -147,7 +146,7 @@ bool Game::isLegalFirst(Shape& shp, const int& x, const int& y, const char& play
 {
     bool isLegal = false;
     if (player == 'A') {
-        if (this->firstStepFlagA == 0) {	// is first
+        if (this->firstStepFlagA == false) {	// is first
             for (int i=0; i<shp.getSize(); i++) {
                 if (x + shp.getPosX(i) == 4 && y + shp.getPosY(i) == 4)
                     return true;
@@ -155,7 +154,7 @@ bool Game::isLegalFirst(Shape& shp, const int& x, const int& y, const char& play
         }
     }
     else {
-        if (this->firstStepFlagB == 0) {	// is first
+        if (this->firstStepFlagB == false) {	// is first
             for (int i=0;i<shp.getSize();i++) {
                 if (x + shp.getPosX(i) == 9 && y + shp.getPosY(i) == 9)
                 	return true;
@@ -204,8 +203,8 @@ bool Game::isSpare(Shape& shp, const int& x, const int& y)
 //To check the move is legal or not, that is, Connected, not Touched and Spare to place.
 bool Game::isLegalMove(Shape& shp, const int& x, const int& y, const char& player)
 {
-    int firstStep = (player == 'A') ? this->firstStepFlagA : this->firstStepFlagB;
-    if (firstStep == 0) {	//is first step
+    bool firstStep = (player == 'A') ? this->firstStepFlagA : this->firstStepFlagB;
+    if (firstStep == false) {	//is first step
         if (isLegalFirst(shp, x, y, player) == true)	// is first step
             return true;
         else
@@ -225,7 +224,7 @@ bool Game::playerMove(Shape& shp, const int& shapeID, const char& player, const 
 {
     char junk, cX, cY;
     //this->piecesUsePointer = (player == 'A')? this->piecesUseA : this->piecesUseB;
-    
+
     // check if piece alredy been used.
     if (this->piecesUsePointer[shapeID] == 0)
      	return false;
@@ -236,9 +235,9 @@ bool Game::playerMove(Shape& shp, const int& shapeID, const char& player, const 
 		    this->board[shp.getPosX(i)+x][shp.getPosY(i)+y] = player;
 
 		if (player == 'A')
-            this->firstStepFlagA = 1;
+            this->firstStepFlagA = true;
         else
-            this->firstStepFlagB = 1;
+            this->firstStepFlagB = true;
 
 		printBoard();
 		return true;
@@ -254,10 +253,7 @@ bool Game::hasPlaceToPut(const int& id, const char& player)
 	Shape selected;
     int counter  = 0;
 
-    if (player == 'A')
-        selected = this->shapesA[id];
-    else
-        selected = this->shapesB[id];
+    selected = this->shapes[id];
 
 	for (int i=0; i<14; i++) {
 		for (int j=0; j<14; j++) {
@@ -337,9 +333,9 @@ string Game::winner()
     int ALeft = 0, BLeft = 0;
     for (int i=0; i<21; i++) {
         if (!this->piecesUseA[i])
-            ALeft += this->shapesA[i].getSize();
+            ALeft += this->shapes[i].getSize();
         if (!this->piecesUseB[i])
-            BLeft += this->shapesB[i].getSize();
+            BLeft += this->shapes[i].getSize();
     }
 
     if (ALeft - BLeft > this->biggestRange || BLeft - ALeft > this->biggestRange) {

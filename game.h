@@ -11,21 +11,27 @@
 #include <string>
 #include <cstring>
 #include "shapes.h"
-using namespace std;
+
 
 #define RESET   "\033[0m"
 #define RED     "\033[31m"      /* Red */
 #define YELLOW  "\033[33m"      /* Yellow */
 #define MAGENTA "\033[45m"      /* Magenta */
-
+//Some nouns definition :
+//  board : The game board. The playground.
+//  shape : The stuff looks like LEGO. The thing you place it on the board.
+//  piece : Same as shape. Different coder.
+//  shp   : Abbr for shape.
+//  block : smallest unit on the board. 1x1 square.
+using namespace std;
 class Game
 {
 private:
     int biggestRange, bestA, bestB;
-    vector<Shape> shapes, shapesA, shapesB;
+    vector<Shape> shapes;
     char board[14][14];
 
-    int firstStepFlagA, firstStepFlagB;
+    bool firstStepFlagA, firstStepFlagB;
 
     //list of whether the piece is used(true) or not(false)
     bool piecesUseA[21], piecesUseB[21];
@@ -33,7 +39,7 @@ private:
 
     static const int shoulders[][2];
     static const int sides[][2];
-    
+
     //Check if it's first step and if it's a legal first step.
     bool isLegalFirst(Shape& shp, const int& x, const int& y, const char& player);
     //To check if the block is connected so it's LEGAL
@@ -45,7 +51,7 @@ private:
 
 public:
     Game();
-    
+
     //Create shapes and initial board and identifiers for placed shapes.
     void init();
     //Set all the pointers to the assigned player's

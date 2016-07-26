@@ -15,7 +15,12 @@
 #define RED     "\033[31m"      /* Red */
 #define YELLOW  "\033[33m"      /* Yellow */
 #define MAGENTA "\033[45m"      /* Magenta */
-
+//Some nouns definition :
+//  board : The game board. The playground.
+//  shape : The stuff looks like LEGO. The thing you place it on the board.
+//  piece : Same as shape. Different coder.
+//  shp   : Abbr for shape.
+//  block : smallest unit on the board. 1x1 square.
 using namespace std;
 
 int main()
@@ -43,7 +48,7 @@ int main()
         twoAIs();
     else if (mode == 3)
         play.playerAI();
-    else 
+    else
         play.priorityAdvantage();
     string s = "";
 

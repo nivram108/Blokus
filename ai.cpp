@@ -13,7 +13,12 @@
 #define RED     ""      /* Red */
 #define YELLOW  ""      /* Yellow */
 #define MAGENTA ""      /* Magenta */
-
+//Some nouns definition :
+//  board : The game board. The playground.
+//  shape : The stuff looks like LEGO. The thing you place it on the board.
+//  piece : Same as shape. Different coder.
+//  shp   : Abbr for shape.
+//  block : smallest unit on the board. 1x1 square.
 using namespace std;
 
 // If autoPlay fails to place THE shape by random, place it by brutal force
@@ -21,10 +26,7 @@ void autoPlace(int id, char player)
 {
     Shape selected;
     int counter  = 0;
-    if (player == 'A')
-        selected = shapesA[id];
-    else
-        selected = shapesB[id];
+    selected = shapes[id];
 
 	for (int i=0; i<14; i++) {      //Brutal force placement
 		for (int j=0; j<14; j++) {
