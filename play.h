@@ -12,23 +12,20 @@
 #include "shapes.h"
 #include "game.h"
 #include "ai.h"
+using namespace std;
 
-#define RESET   "\033[0m"
-#define RED     "\033[31m"      /* Red */
-#define YELLOW  "\033[33m"      /* Yellow */
-#define MAGENTA "\033[45m"      /* Magenta */
 //Some nouns definition :
 //  board : The game board. The playground.
 //  shape : The stuff looks like LEGO. The thing you place it on the board.
 //  piece : Same as shape. Different coder.
 //  shp   : Abbr for shape.
 //  block : smallest unit on the board. 1x1 square.
-using namespace std;
 
 class Play
 {
 private:
 	Game game;
+	AI ai;
 	int instrCounter;
 	int shapeID;
 	char player;

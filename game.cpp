@@ -9,7 +9,7 @@
 #include <cstring>
 #include "shapes.h"
 #include "game.h"
-
+using namespace std;
 
 #define RESET   "\033[0m"
 #define RED     "\033[31m"      /* Red */
@@ -22,7 +22,7 @@
 //  piece : Same as shape. Different coder.
 //  shp   : Abbr for shape.
 //  block : smallest unit on the board. 1x1 square.
-using namespace std;
+
 const int Game::shoulders[][2] = {{1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
 const int Game::sides[][2] = {{1, 0}, {0, 1}, {0, -1}, {-1, 0}};
 
@@ -63,6 +63,12 @@ void Game::setPlayer(const char& player)
     this->piecesUsePointer = (player == 'A')? this->piecesUseA: this->piecesUseB;
 }
 
+//Get the shape of the assigned ID
+Shape Game::getShape(const int& shapeID)
+{
+    return this->shapes[shapeID];
+}
+
 //Check if the selected piece used(true) or not(false)
 bool Game::isPieceUse(const int& k)
 {
@@ -73,6 +79,18 @@ bool Game::isPieceUse(const int& k)
 void Game::setPieceUse(const int& k)
 {
     this->piecesUsePointer[k] = true;
+}
+
+//Get bestA
+int Game::getBestA()
+{
+    return this->bestA;
+}
+
+//Get bestB
+int Game::getBestB()
+{
+    return this->bestB;
 }
 
 //List the shapes of the player that have not been placed yet.
@@ -306,7 +324,7 @@ bool Game::isGameEnd(const char& player)
 }
 
 //Checking game is ended or not, but without print anything. ( for AI )
-bool Game::checkGameEndAI(const char& player)
+bool Game::isGameEndAI(const char& player)
 {
 	int counter = 0;
 	bool cannot_put_any_pieces = true;
@@ -346,3 +364,4 @@ string Game::winner()
     cout << ALeft << " : " << BLeft << endl;
     return (ALeft < BLeft) ? "A" : "B";
 }
+

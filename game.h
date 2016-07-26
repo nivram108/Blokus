@@ -11,26 +11,26 @@
 #include <string>
 #include <cstring>
 #include "shapes.h"
-
+using namespace std;
 
 #define RESET   "\033[0m"
 #define RED     "\033[31m"      /* Red */
 #define YELLOW  "\033[33m"      /* Yellow */
 #define MAGENTA "\033[45m"      /* Magenta */
+
 //Some nouns definition :
 //  board : The game board. The playground.
 //  shape : The stuff looks like LEGO. The thing you place it on the board.
 //  piece : Same as shape. Different coder.
 //  shp   : Abbr for shape.
 //  block : smallest unit on the board. 1x1 square.
-using namespace std;
+
 class Game
 {
 private:
     int biggestRange, bestA, bestB;
     vector<Shape> shapes;
     char board[14][14];
-
     bool firstStepFlagA, firstStepFlagB;
 
     //list of whether the piece is used(true) or not(false)
@@ -56,10 +56,17 @@ public:
     void init();
     //Set all the pointers to the assigned player's
     void setPlayer(const char& player);
+    //Get the shape of the assigned ID
+    Shape getShape(const int& shapeID);
     //Check if the selected piece used(true) or not(false)
     bool isPieceUse(const int& k);
     //Set the selected piece used
     void setPieceUse(const int& k);
+    //Get bestA
+    int getBestA();
+    //Get bestB
+    int getBestB();
+
     //List the shapes of the player that have not been placed yet.
     void listShapes(const char& player);
     //Print out the current board status.
@@ -79,7 +86,7 @@ public:
     //To check if the shape can be place anywhere or not.
     bool hasPlaceToPut(const int& id, const char& player);
     //Checking game is ended or not, but without print anything. ( for AI )
-    bool checkGameEndAI(const char& player);
+    bool isGameEndAI(const char& player);
 };
 
 #endif

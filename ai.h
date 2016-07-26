@@ -10,23 +10,29 @@
 #include <fstream>
 #include <string>
 #include "shapes.h"
+#include "game.h"
+using namespace std;
 
-#define RESET   "\033[0m"
-#define RED     "\033[31m"      /* Red */
-#define YELLOW  "\033[33m"      /* Yellow */
-#define MAGENTA "\033[45m"      /* Magenta */
 //Some nouns definition :
 //  board : The game board. The playground.
 //  shape : The stuff looks like LEGO. The thing you place it on the board.
 //  piece : Same as shape. Different coder.
 //  shp   : Abbr for shape.
 //  block : smallest unit on the board. 1x1 square.
-using namespace std;
 
-void autoPlace(int id, char player);
+class AI
+{
+private:
+	Game game;
+public:
+	//AI();
 
-void autoPlay(char player);
-
-void twoAIs();
+	// If autoPlay fails to place THE shape by random, place it by brutal force
+	void autoPlace(int id, char player);
+	//Play a round for Artificial Idiot. Random everything.
+	void autoPlay(char player);
+	//mode of two Artificial Idiots battle.
+	void twoAIs();
+};
 
 #endif
