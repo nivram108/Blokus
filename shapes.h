@@ -8,8 +8,6 @@
 #include <cstring>
 using namespace std;
 
-int shapeChoises[21];
-
 class Shape
 {
 private:
