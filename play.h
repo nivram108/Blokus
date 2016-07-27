@@ -37,6 +37,8 @@ public:
 	Play();
 	//Playing mode of 2 human players.
 	void twoPlayers();
+	//mode of two Artificial Idiots battle.
+	void twoAIs();
 	//Playing mode of human v.s. Artificial Idiot
 	void playerAI();
 	//

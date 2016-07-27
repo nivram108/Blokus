@@ -6,8 +6,8 @@
 #include <ctime>
 #include <fstream>
 #include <string>
-#include "shapes.h"
-#include "game.h"
+//#include "shapes.h"
+//#include "game.h"
 #include "play.h"
 #include "ai.h"
 using namespace std;
@@ -15,7 +15,6 @@ using namespace std;
 int main()
 {
     Play play;
-    AI ai;
     srand(time(NULL));
     bool flag = false;
     int mode;
@@ -35,7 +34,7 @@ int main()
         pause = true;
     }
     else if (mode == 2)
-        ai.twoAIs();
+        play.twoAIs();
     else if (mode == 3)
         play.playerAI();
     else

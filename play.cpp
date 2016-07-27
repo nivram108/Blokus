@@ -133,6 +133,12 @@ void Play::twoPlayers()
 
 }
 
+//mode of two Artificial Idiots battle.
+void Play::twoAIs()
+{
+	ai.twoAIs();
+}
+
 //Playing mode of human v.s. Artificial Idiot
 void Play::playerAI()
 {
