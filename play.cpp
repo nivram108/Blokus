@@ -23,8 +23,8 @@ Play::Play()
 {
 	this->instrCounter = 0;
     this->turn = true;
-    this->isSelect = false;
-    this->endCounter = 0;
+    this->selectShape = false;
+    this->deadPlayer = 0;
 }
 
 //Playing mode of 2 human players.
@@ -39,18 +39,18 @@ void Play::twoPlayers()
         this->game.setPlayer(this->player);
 
         // check if player still have move to implement.
-        if (this->endCounter == 2) {
+        if (this->deadPlayer == 2) {
             cout << "Game is ended." << endl;
             return;
         }
         if (this->game.isGameEnd(this->player) == false) {
-            this->isSelect = false;
+            this->selectShape = false;
             this->turn = !this->turn;
-            this->endCounter++;
+            this->deadPlayer++;
         }
         else {
-            this->endCounter = 0;
-	        cout << "| [instruction #" << instrCounter << "] you can press 1~7:" << "\n|\n";
+            this->deadPlayer = 0;
+	        cout << "| [instruction #" << this->instrCounter << "] you can press 1~7:" << "\n|\n";
             cout << "|\t1) Select a shape\n|\t2) Flip\n|\t3) Rotate clockwise\n|\t4) Next move\n|\t5) Print the board\n|\t6) List remaining shapes\n|\t7) Check the condition\n|\t999) EXIT\n|\n";
 	        cout << "|--------------------------------- " << endl;
 	        cout << " Blockus >> ";
@@ -59,7 +59,7 @@ void Play::twoPlayers()
 	        if (instr == 999)
 	            break;
 	        if (instr == 1) {		// select shape.
-	            this->isSelect = true;
+	            this->selectShape = true;
 	            cout<<"shape index:";
 	            int tmpID;
 	            cin >> tmpID;
@@ -81,7 +81,7 @@ void Play::twoPlayers()
 	            }
 	        }
 	        else if (instr == 2) {	// Flip
-	        	if (this->isSelect == false) {
+	        	if (this->selectShape == false) {
 	        		cout << "Please Select a shape." << endl;
 	                continue;
 	        	}
@@ -89,7 +89,7 @@ void Play::twoPlayers()
 	            this->selected.printShape();
 	        }
 	        else if (instr == 3) { // Turn
-	        	if (this->isSelect == false) {
+	        	if (this->selectShape == false) {
 	        		cout << "Please Select a shape." << endl;
 	                continue;
 	        	}
@@ -99,7 +99,7 @@ void Play::twoPlayers()
 	        else if (instr == 4) { //player_move.
 	            cout << "shapeID:" << this->shapeID << endl;
 	            this->game.printBoard();
-	            if (this->isSelect == false) {	//Hasn't select yet
+	            if (this->selectShape == false) {	//Hasn't select yet
 	                cout << "Please Select a shape." << endl;
 	                continue;
 	            }
@@ -111,7 +111,7 @@ void Play::twoPlayers()
 	            if (legalMove == true) {
 	            	this->game.setPieceUse(this->shapeID);
 	            	this->instrCounter++;
-	                this->isSelect = false;
+	                this->selectShape = false;
 	                this->turn = !this->turn;
 	            }
 	        }
@@ -155,17 +155,17 @@ void Play::playerAI()
         this->game.setPlayer(this->player);
 
         // check if player still have move to implement.
-        if (this->endCounter == 2) {
+        if (this->deadPlayer == 2) {
             cout << "Game is ended." << endl;
             return;
         }
         if (this->game.isGameEnd(this->player) == false) {
-            this->isSelect = false;
+            this->selectShape = false;
             this->turn = !this->turn;
-            this->endCounter++;
+            this->deadPlayer++;
         }
         else {
-            this->endCounter = 0;
+            this->deadPlayer = 0;
 	        cout << "| [instruction #" << this->instrCounter << "] you can press 1~7:" <<"\n|\n";
             cout << "|\t1) Select a shape\n|\t2) Flip\n|\t3) Rotate clockwise\n|\t4) Next move\n|\t5) Print the board\n|\t6) List remaining shapes\n|\t7) Check the condition\n|\t999) EXIT\n|\n";
 	        cout << "|--------------------------------- " << endl;
@@ -175,7 +175,7 @@ void Play::playerAI()
 	        if (instr == 999)
 	            break;
 	        if (instr == 1) {		// select shape.
-	            this->isSelect = true;
+	            this->selectShape = true;
 	            cout << "shape index:";
 	            int tmpID;
 	            cin >> tmpID;
@@ -207,7 +207,7 @@ void Play::playerAI()
 	        else if (instr == 4) { //player_move.
 	            cout << "shapeID:" << this->shapeID << endl;
 	            this->game.printBoard();
-	            if (this->isSelect == false) {	//Hasn't select yet
+	            if (this->selectShape == false) {	//Hasn't select yet
 	                cout<<"Please Select a shape."<<endl;
 	                continue;
 	            }
@@ -220,7 +220,7 @@ void Play::playerAI()
 	            if (legalMove == true) {
 	                this->game.setPieceUse(this->shapeID);
 	            	this->instrCounter++;
-	                this->isSelect = false;
+	                this->selectShape = false;
 	                this->turn = !this->turn;
 	            }
 	        }

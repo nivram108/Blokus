@@ -30,8 +30,8 @@ private:
 	int shapeID;
 	char player;
 	Shape selected;
-    bool turn, isSelect;
-    int endCounter;
+    bool turn, selectShape;
+    int deadPlayer;
 
 public:
 	Play();
