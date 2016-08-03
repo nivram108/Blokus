@@ -25,7 +25,7 @@ class AI
 private:
 	Game game;
 public:
-	//AI();
+	AI();
 
 	// If autoPlay fails to place THE shape by random, place it by brutal force
 	void autoPlace(int id, char player);

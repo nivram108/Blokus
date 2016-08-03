@@ -66,19 +66,29 @@ void Game::setPlayer(const char& player)
 //Get the shape of the assigned ID
 Shape Game::getShape(const int& shapeID)
 {
-    return this->shapes[shapeID];
+    if (shapeID<this->shapes.size() && shapeID>=0)
+        return this->shapes[shapeID];
+    
+    Shape nullShape;
+    return nullShape;
 }
 
 //Check if the selected piece used(true) or not(false)
 bool Game::isPieceUse(const int& k)
 {
-    return this->piecesUsePointer[k];
+    if (k>=0 && k<21)
+        return this->piecesUsePointer[k];
+    cout << "Game::isPieceUse: The argument is not between 0 and 21." << endl;
+    return false;
 }
 
 //Set the selected piece used
 void Game::setPieceUse(const int& k)
 {
-    this->piecesUsePointer[k] = true;
+    if (k>=0 && k<21)
+        this->piecesUsePointer[k] = true;
+    else
+        cout << "Game::setPieceUse: The argument is not between 0 and 21." << endl;
 }
 
 //Get bestA
@@ -243,8 +253,14 @@ bool Game::playerMove(Shape& shp, const int& shapeID, const char& player, const 
     char junk, cX, cY;
     //this->piecesUsePointer = (player == 'A')? this->piecesUseA : this->piecesUseB;
 
+    // shapeID is not between 0 and 21.
+    if (shapeID>=21 || shapeID<0) {
+        cout << "Game::playerMove: The argument is not between 0 and 21." << endl;
+        return false;
+    }
+
     // check if piece alredy been used.
-    if (this->piecesUsePointer[shapeID] == 0)
+    if (this->piecesUsePointer[shapeID])
      	return false;
 
     // check if legal.
@@ -270,7 +286,10 @@ bool Game::hasPlaceToPut(const int& id, const char& player)
 	// loop though all board.
 	Shape selected;
     int counter  = 0;
-
+    if (id>=21 || id<0) {
+        cout << "Game::hasPlaceToPut: The argument is not between 0 and 21." << endl;
+        return false;
+    }
     selected = this->shapes[id];
 
 	for (int i=0; i<14; i++) {
@@ -301,19 +320,19 @@ bool Game::isGameEnd(const char& player)
 	bool cannot_put_any_pieces = true;
     this->piecesUsePointer = (player == 'A') ? this->piecesUseA : this->piecesUseB;
 	for (int i=0; i<21; i++) {
-		if (this->piecesUsePointer[i] == 1)
+		if (!this->piecesUsePointer[i])
 			counter++;
 	}
 	for (int i=0; i<21; i++) {
-		if (this->piecesUsePointer[i] == 1) {
+		if (!this->piecesUsePointer[i]) {
  			if (hasPlaceToPut(i,player) == true)// can place
                 cannot_put_any_pieces = false;// can place
 		}
 	}
 	if (cannot_put_any_pieces == true) { // can't place, end.
 		cout << "|--------------------------------- \n|" << endl;
-		cout << "| " << player << "You have no more pieces or you can't place any more.\n|" << endl;
-		cout<<counter<<endl;
+		cout << "| " << player << ": You have no more pieces or you can't place any more.\n|" << endl;
+		cout << counter << endl;
 		return false;//end
 	}
 	else {
@@ -330,11 +349,11 @@ bool Game::isGameEndAI(const char& player)
 	bool cannot_put_any_pieces = true;
     this->piecesUsePointer = (player == 'A') ? this->piecesUseA : this->piecesUseB;
 	for (int i=0; i<21; i++) {
-		if (this->piecesUsePointer[i] == 1)
+		if (!this->piecesUsePointer[i])
 			counter++;
 	}
 	for (int i=0; i<21; i++) {
-		if (this->piecesUsePointer[i] == 1) {
+		if (!this->piecesUsePointer[i]) {
 			if (hasPlaceToPut(i, player) == true)
                 cannot_put_any_pieces = false;
 		}

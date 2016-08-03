@@ -22,7 +22,6 @@ using namespace std;
 Play::Play()
 {
 	this->instrCounter = 0;
-	this->selected = this->game.getShape(0);
     this->turn = true;
     this->isSelect = false;
     this->endCounter = 0;
@@ -278,6 +277,7 @@ void Play::priorityAdvantage()
 void Play::init()
 {
 	this->game.init();
+	this->selected = this->game.getShape(0);
 }
 
 void Play::printBoard()

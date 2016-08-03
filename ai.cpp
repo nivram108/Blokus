@@ -18,6 +18,8 @@ using namespace std;
 //  shp   : Abbr for shape.
 //  block : smallest unit on the board. 1x1 square.
 
+AI::AI() {}
+
 // If autoPlay fails to place THE shape by random, place it by brutal force
 void AI::autoPlace(int id, char player)
 {
