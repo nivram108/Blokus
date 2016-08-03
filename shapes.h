@@ -19,10 +19,11 @@ private:
     int uniX;
     int uniY;
 	bool isshape(const int& x, const int& y);
-	void normalizeshape();
+	void normalizeShape();
 
 public:
     Shape();
+    Shape(const Shape& shp);
 	void set(const int& size, const string& xStr, const string& yStr);
 	void flip();
 	void turnClockwise();

@@ -17,6 +17,17 @@ Shape::Shape()
     this->uniY = 0;
 }
 
+Shape::Shape(const Shape& shp)
+{
+    this->size = shp.size;
+    for (int i=0; i<5; i++) {
+        this->x[i] = shp.x[i];
+        this->y[i] = shp.y[i];
+    }
+    this->uniX = shp.uniX;
+    this->uniY = shp.uniY;
+}
+
 void Shape::set(const int& size, const string& xStr, const string& yStr)
 {
     this->size = size;
@@ -38,7 +49,9 @@ bool Shape::isshape(const int& x, const int& y)
 void Shape::flip()
 {
     for (int i=0; i<5; i++)    //flip
-        this->x[i] = -1 * this->x[i];
+        this->x[i] *= -1;
+    this->uniX *= -1;
+    this->normalizeShape();
 }
 
 void Shape::turnClockwise()
@@ -49,6 +62,10 @@ void Shape::turnClockwise()
         this->x[i] = this->y[i];
         this->y[i] = -1 * tmp;
     }
+    tmp = uniX;
+    uniX = uniY;
+    uniY = -1 * tmp;
+    this->normalizeShape();
 }
 
 void Shape::turnCounter_Clockwise()
@@ -59,9 +76,13 @@ void Shape::turnCounter_Clockwise()
         this->x[i] = -1 * this->y[i];
         this->y[i] = tmp;
     }
+    tmp = uniX;
+    uniX = -1 * uniY;
+    uniY = tmp;
+    this->normalizeShape();
 }
 
-void Shape::normalizeshape()
+void Shape::normalizeShape()
 {
     int minX = 0, minY = 0;
     for (int i=0; i<5; i++) {
@@ -79,7 +100,6 @@ void Shape::normalizeshape()
 
 void Shape::printShape()
 {
-    this->normalizeshape();
     for (int i=0; i<5; i++) {
         for (int j=0; j<5; j++) {
             if (this->isshape(i, j)) {
@@ -357,7 +377,7 @@ Shape assignshape_20()
 {
     /*
     OO
-     OOo
+     OOO
     */
     Shape tmp;
 	tmp.set(5, "00111", "01123");

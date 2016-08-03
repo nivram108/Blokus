@@ -222,7 +222,8 @@ bool Game::isTouchedBySelf(Shape& shp, const int& x, const int& y, const char& p
 bool Game::isSpare(Shape& shp, const int& x, const int& y)
 {
     for (int i=0; i<5; i++) {
-	    if ((shp.getPosX(i)+x < 14 && shp.getPosX(i)+x >= 0 && shp.getPosY(i)+y <14 && shp.getPosY(i)+y >= 0  && this->board[shp.getPosX(i)+x][shp.getPosY(i)+y] == '.')==false ) // the block is in board range and unoccupied
+        // The block is in board range and unoccupied.
+	    if ((shp.getPosX(i)+x < 14 && shp.getPosX(i)+x >= 0 && shp.getPosY(i)+y <14 && shp.getPosY(i)+y >= 0  && this->board[shp.getPosX(i)+x][shp.getPosY(i)+y] == '.')==false )
 	        return false;
     }
     return true;
@@ -239,12 +240,20 @@ bool Game::isLegalMove(Shape& shp, const int& x, const int& y, const char& playe
             return false;
     }
 
-    if( isConnectedToShoulder(shp, x, y, player)==false || isTouchedBySelf(shp, x, y, player)==true || isSpare(shp, x, y) ==false )
+    if(!isConnectedToShoulder(shp, x, y, player)) {
+        //cout << "The shape is not connected to any shoulder!" << endl;
         return false;
+    }
+    else if (isTouchedBySelf(shp, x, y, player)) {
+        //cout << "The shape is touched by some sides!" << endl;
+        return false;
+    }
+    else if (!isSpare(shp, x, y)) {
+        //cout << "The position is illegal or used!" << endl;
+        return false;
+    }
     else
         return true;
-
-    return false;
 }
 
 //Make a single move. Return true if the move is success.

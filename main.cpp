@@ -23,7 +23,10 @@ int main()
     cout << "Game Start." << endl << endl;
     cout << "|--------------------------------- |" << endl;
     cout << "|   " << endl << "| Select Mode:" << "\n|\n";
-    cout << "|\t1) Player\n|\t2) Auto\n|\t3) playerAI\n|\t4) See Priority Advantage\n|" << endl;
+    cout << "|\t1) Player v.s Player" << endl;
+    cout << "|\t2) Player v.s AI"<< endl;
+    cout << "|\t3) AI     v.s AI" << endl;
+    cout << "|\t4) See Priority Advantage\n|" << endl;
     cout << "|--------------------------------- \n";
     cout << "Blokus>>";
 
@@ -34,9 +37,9 @@ int main()
         pause = true;
     }
     else if (mode == 2)
-        play.twoAIs();
-    else if (mode == 3)
         play.playerAI();
+    else if (mode == 3)
+        play.twoAIs();
     else
         play.priorityAdvantage();
     string s = "";

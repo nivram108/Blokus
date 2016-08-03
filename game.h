@@ -73,6 +73,8 @@ public:
     void printBoard();
     //check if the selected shape index is between 0 and 20.
     bool checkShapeID(const int& i);
+    //To check the move is legal or not, that is, Connected, not Touched and Spare to place.
+    bool isLegalMove(Shape& shp, const int& x, const int& y, const char& player);
     //Make a single move. Return true if the move is success.
     bool playerMove(Shape& shp, const int& shapeID, const char& player, const int& x, const int& y);
     //To check if the game is ended.
@@ -81,8 +83,6 @@ public:
     string winner();
 
     //----------------------------AI's NEED--------------------------------//
-    //To check the move is legal or not, that is, Connected, not Touched and Spare to place.
-    bool isLegalMove(Shape& shp, const int& x, const int& y, const char& player);
     //To check if the shape can be place anywhere or not.
     bool hasPlaceToPut(const int& id, const char& player);
     //Checking game is ended or not, but without print anything. ( for AI )
