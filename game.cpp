@@ -68,7 +68,7 @@ Shape Game::getShape(const int& shapeID)
 {
     if (shapeID<this->shapes.size() && shapeID>=0)
         return this->shapes[shapeID];
-    
+
     Shape nullShape;
     return nullShape;
 }
@@ -255,7 +255,27 @@ bool Game::isLegalMove(Shape& shp, const int& x, const int& y, const char& playe
     else
         return true;
 }
+//To tell why the move is illegal
+string Game::reportIllegal(Shape& shp, const int& x, const int& y, const char& player)
+{
 
+    bool firstStep = (player == 'A') ? this->firstStepFlagA : this->firstStepFlagB;
+    if (firstStep == false) {	//is first step
+        if (isLegalFirst(shp, x, y, player) == true)	// is first step
+            return "Is not a legal first step.";
+
+    }
+
+    if(!isConnectedToShoulder(shp, x, y, player)) {
+        return "The shape is not connected to any shoulder!";
+    }
+    else if (isTouchedBySelf(shp, x, y, player)) {
+        return "The shape is touched by some sides!";
+    }
+    else if (!isSpare(shp, x, y)) {
+        return "The position is illegal or used!";
+    }
+}
 //Make a single move. Return true if the move is success.
 bool Game::playerMove(Shape& shp, const int& shapeID, const char& player, const int& x, const int& y)
 {

@@ -33,3 +33,20 @@
 	<string>
 	<cstdlib>
 
+1470230937 source:c:\users\john cena\documents\github\blokus\blokusmar\main.cpp
+	<iostream>
+	<vector>
+	<string>
+	<cstdlib>
+	<cstdio>
+	<ctime>
+	<fstream>
+	<string>
+	"shapes.h"
+
+1470230937 c:\users\john cena\documents\github\blokus\blokusmar\shapes.h
+	<iostream>
+	<vector>
+	<string>
+	<cstdlib>
+

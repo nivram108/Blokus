@@ -51,7 +51,7 @@ void Shape::flip()
     for (int i=0; i<5; i++)    //flip
         this->x[i] *= -1;
     this->uniX *= -1;
-    this->normalizeShape();
+    //this->normalizeShape();
 }
 
 void Shape::turnClockwise()
@@ -65,7 +65,7 @@ void Shape::turnClockwise()
     tmp = uniX;
     uniX = uniY;
     uniY = -1 * tmp;
-    this->normalizeShape();
+    //this->normalizeShape();
 }
 
 void Shape::turnCounter_Clockwise()
@@ -79,7 +79,7 @@ void Shape::turnCounter_Clockwise()
     tmp = uniX;
     uniX = -1 * uniY;
     uniY = tmp;
-    this->normalizeShape();
+    //this->normalizeShape();
 }
 
 void Shape::normalizeShape()
@@ -100,10 +100,12 @@ void Shape::normalizeShape()
 
 void Shape::printShape()
 {
+    Shape tmp = *this;
+    tmp.normalizeShape();
     for (int i=0; i<5; i++) {
         for (int j=0; j<5; j++) {
-            if (this->isshape(i, j)) {
-                if (i==this->uniX && j==this->uniY)
+            if (tmp.isshape(i, j)) {
+                if (i==tmp.uniX && j==tmp.uniY)
                     cout << "*";
                 else
                     cout << "0";
