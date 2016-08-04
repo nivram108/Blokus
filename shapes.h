@@ -15,10 +15,12 @@ class Shape
 		int x[5];
 		int y[5];
 
-		//the point to identify
+		// The point to identify
+		// Always be (0,0) to access the correct position in use of game.cpp
 		int uniX;
 		int uniY;
-		bool isshape(const int& x, const int& y);
+		
+		bool isShape(const int& x, const int& y);
 		void normalizeShape();
 
 	public:
@@ -27,7 +29,6 @@ class Shape
 		void set(const int& size, const string& xStr, const string& yStr);
 		void flip();
 		void turnClockwise();
-		void turnCounter_Clockwise();
 		void printShape();
 		void operator = (const Shape& shp);
 		int getSize();

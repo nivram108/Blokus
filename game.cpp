@@ -29,8 +29,9 @@ const int Game::sides[][2] = {{1, 0}, {0, 1}, {0, -1}, {-1, 0}};
 Game::Game()
 {
 	this->biggestRange = 0;
-	this->firstStepFlagA = false;
-	this->firstStepFlagB = false;
+	this->firstStepFlagA = true;
+	this->firstStepFlagB = true;
+	this->errorMessage = "";
 	memset(this->piecesUseA, 0, sizeof(this->piecesUseA));
 	memset(this->piecesUseB, 0, sizeof(this->piecesUseB));
 }
@@ -70,6 +71,7 @@ Shape Game::getShape(const int& shapeID)
 		return this->shapes[shapeID];
 
 	Shape nullShape;
+	cout << "Game::getShape: Can not get the assigned shape in shapes" << endl;
 	return nullShape;
 }
 
@@ -91,16 +93,22 @@ void Game::setPieceUse(const int& k)
 		cout << "Game::setPieceUse: The argument is not between 0 and 21." << endl;
 }
 
-//Get bestA
-int Game::getBestA()
+//Get biggestRangeA
+int Game::getBstRngA()
 {
-	return this->bestA;
+	return this->biggestRangeA;
 }
 
-//Get bestB
-int Game::getBestB()
+//Get biggestRangeB
+int Game::getBstRngB()
 {
-	return this->bestB;
+	return this->biggestRangeB;
+}
+
+//Get errorMessage
+string Game::getErrMsg()
+{
+	return this->errorMessage;
 }
 
 //List the shapes of the player that have not been placed yet.
@@ -163,7 +171,7 @@ void Game::printBoard()
 	cout << "|\n|---------------------------------\n" << endl;
 }
 
-//check if the selected shape index is between 0 and 20.
+//Check if the selected shape index is between 0 and 20.
 bool Game::checkShapeID(const int& i) {
 	if ( i >= 0 && i <= 20) return true;
 	else return false;
@@ -172,9 +180,8 @@ bool Game::checkShapeID(const int& i) {
 //Check if it's first step and if it's a legal first step.
 bool Game::isLegalFirst(Shape& shp, const int& x, const int& y, const char& player)
 {
-	bool isLegal = false;
 	if (player == 'A') {
-		if (this->firstStepFlagA == false) {	// is first
+		if (this->firstStepFlagA) {	// is first
 			for (int i=0; i<shp.getSize(); i++) {
 				if (x + shp.getPosX(i) == 4 && y + shp.getPosY(i) == 4)
 					return true;
@@ -182,13 +189,14 @@ bool Game::isLegalFirst(Shape& shp, const int& x, const int& y, const char& play
 		}
 	}
 	else {
-		if (this->firstStepFlagB == false) {	// is first
+		if (this->firstStepFlagB) {	// is first
 			for (int i=0;i<shp.getSize();i++) {
 				if (x + shp.getPosX(i) == 9 && y + shp.getPosY(i) == 9)
 					return true;
 			}
 		}
 	}
+	this->errorMessage = "The first shape doesn't cover the initial position!";
 	return false;
 }
 
@@ -202,6 +210,7 @@ bool Game::isConnectedToShoulder(Shape& shp, const int& x, const int& y, const c
 				return true;
 		}
 	}
+	this->errorMessage = "The shape is not connected to any shoulder!";
 	return false;
 }
 
@@ -215,6 +224,7 @@ bool Game::isTouchedBySelf(Shape& shp, const int& x, const int& y, const char& p
 				return true;
 		}
 	}
+	this->errorMessage = "The shape is touched by some sides!";
 	return false;
 }
 
@@ -223,8 +233,10 @@ bool Game::isSpare(Shape& shp, const int& x, const int& y)
 {
 	for (int i=0; i<5; i++) {
 		// The block is in board range and unoccupied.
-		if ((shp.getPosX(i)+x < 14 && shp.getPosX(i)+x >= 0 && shp.getPosY(i)+y <14 && shp.getPosY(i)+y >= 0  && this->board[shp.getPosX(i)+x][shp.getPosY(i)+y] == '.')==false )
+		if ((shp.getPosX(i)+x < 14 && shp.getPosX(i)+x >= 0 && shp.getPosY(i)+y <14 && shp.getPosY(i)+y >= 0  && this->board[shp.getPosX(i)+x][shp.getPosY(i)+y] == '.')==false) {
+			this->errorMessage = "The position is illegal or used!";
 			return false;
+		}
 	}
 	return true;
 }
@@ -233,49 +245,19 @@ bool Game::isSpare(Shape& shp, const int& x, const int& y)
 bool Game::isLegalMove(Shape& shp, const int& x, const int& y, const char& player)
 {
 	bool firstStep = (player == 'A') ? this->firstStepFlagA : this->firstStepFlagB;
-	if (firstStep == false) {	//is first step
+	if (firstStep) {	//is first step
 		if (isLegalFirst(shp, x, y, player) == true)	// is first step
 			return true;
 		else
 			return false;
 	}
 
-	if(!isConnectedToShoulder(shp, x, y, player)) {
-		//cout << "The shape is not connected to any shoulder!" << endl;
+	if(!isConnectedToShoulder(shp, x, y, player) || isTouchedBySelf(shp, x, y, player) || !isSpare(shp, x, y))
 		return false;
-	}
-	else if (isTouchedBySelf(shp, x, y, player)) {
-		//cout << "The shape is touched by some sides!" << endl;
-		return false;
-	}
-	else if (!isSpare(shp, x, y)) {
-		//cout << "The position is illegal or used!" << endl;
-		return false;
-	}
 	else
 		return true;
 }
-//To tell why the move is illegal
-string Game::reportIllegal(Shape& shp, const int& x, const int& y, const char& player)
-{
 
-	bool firstStep = (player == 'A') ? this->firstStepFlagA : this->firstStepFlagB;
-	if (firstStep == false) {	//is first step
-		if (isLegalFirst(shp, x, y, player) == true)	// is first step
-			return "Is not a legal first step.";
-
-	}
-
-	if(!isConnectedToShoulder(shp, x, y, player)) {
-		return "The shape is not connected to any shoulder!";
-	}
-	else if (isTouchedBySelf(shp, x, y, player)) {
-		return "The shape is touched by some sides!";
-	}
-	else if (!isSpare(shp, x, y)) {
-		return "The position is illegal or used!";
-	}
-}
 //Make a single move. Return true if the move is success.
 bool Game::playerMove(Shape& shp, const int& shapeID, const char& player, const int& x, const int& y)
 {
@@ -284,7 +266,7 @@ bool Game::playerMove(Shape& shp, const int& shapeID, const char& player, const 
 
 	// shapeID is not between 0 and 21.
 	if (shapeID>=21 || shapeID<0) {
-		cout << "Game::playerMove: The argument is not between 0 and 21." << endl;
+		this->errorMessage = "Game::playerMove: The argument is not between 0 and 21.";
 		return false;
 	}
 
@@ -294,13 +276,14 @@ bool Game::playerMove(Shape& shp, const int& shapeID, const char& player, const 
 
 	// check if legal.
 	if(isLegalMove(shp, x, y, player)) {
+		// The uniX and uniY of "shp" is always (0,0)
 		for (int i=0; i<5; i++)
 			this->board[shp.getPosX(i)+x][shp.getPosY(i)+y] = player;
 
 		if (player == 'A')
-			this->firstStepFlagA = true;
+			this->firstStepFlagA = false;
 		else
-			this->firstStepFlagB = true;
+			this->firstStepFlagB = false;
 
 		printBoard();
 		return true;
@@ -341,12 +324,12 @@ bool Game::hasPlaceToPut(const int& id, const char& player)
 	return false; // if this piece can't   => return false.
 }
 
-//To check if the game is ended.
-bool Game::isGameEnd(const char& player)
+//To check if the player have no shape to put and his turn is ended.
+bool Game::isGameAlive(const char& player)
 {
 	cout << "\n\nstart check...\n" << endl;
 	int counter = 0;
-	bool cannot_put_any_pieces = true;
+	bool cannotPutPieces = true;
 	this->piecesUsePointer = (player == 'A') ? this->piecesUseA : this->piecesUseB;
 	for (int i=0; i<21; i++) {
 		if (!this->piecesUsePointer[i])
@@ -354,28 +337,28 @@ bool Game::isGameEnd(const char& player)
 	}
 	for (int i=0; i<21; i++) {
 		if (!this->piecesUsePointer[i]) {
-			if (hasPlaceToPut(i,player) == true)// can place
-				cannot_put_any_pieces = false;// can place
+			if (hasPlaceToPut(i, player) == true)// can place
+				cannotPutPieces = false;// can place
 		}
 	}
-	if (cannot_put_any_pieces == true) { // can't place, end.
+	if (cannotPutPieces == true) { // can't place, end.
 		cout << "|--------------------------------- \n|" << endl;
 		cout << "| " << player << ": You have no more pieces or you can't place any more.\n|" << endl;
-		cout << counter << endl;
-		return false;//end
+		cout << "| " << player << ": " << counter << " pieces left." << endl;
+		return false;	//end
 	}
 	else {
 		cout << "|--------------------------------- \n|" << endl;
 		cout << "| " << player << ": " << counter << " pieces left. Keep going.\n|" << endl;
-		return true;//still
+		return true;	//still
 	}
 }
 
-//Checking game is ended or not, but without print anything. ( for AI )
-bool Game::isGameEndAI(const char& player)
+//Same as isGameAlive, but without print anything. ( for AI )
+bool Game::isGameAliveAI(const char& player)
 {
 	int counter = 0;
-	bool cannot_put_any_pieces = true;
+	bool cannotPutPieces = true;
 	this->piecesUsePointer = (player == 'A') ? this->piecesUseA : this->piecesUseB;
 	for (int i=0; i<21; i++) {
 		if (!this->piecesUsePointer[i])
@@ -384,11 +367,11 @@ bool Game::isGameEndAI(const char& player)
 	for (int i=0; i<21; i++) {
 		if (!this->piecesUsePointer[i]) {
 			if (hasPlaceToPut(i, player) == true)
-				cannot_put_any_pieces = false;
+				cannotPutPieces = false;
 		}
 	}
 	
-	if (cannot_put_any_pieces){
+	if (cannotPutPieces){
 		cout << "press!!!" << player << endl;
 		return false;
 	}
@@ -411,8 +394,8 @@ string Game::winner()
 
 	if (ALeft - BLeft > this->biggestRange || BLeft - ALeft > this->biggestRange) {
 		this->biggestRange = ALeft - BLeft;
-		this->bestA = ALeft;
-		this->bestB = BLeft;
+		this->biggestRangeA = ALeft;
+		this->biggestRangeB = BLeft;
 	}
 	cout << ALeft << " : " << BLeft << endl;
 	return (ALeft < BLeft) ? "A" : "B";

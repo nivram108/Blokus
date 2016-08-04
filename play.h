@@ -26,12 +26,14 @@ class Play
 	private:
 		Game game;
 		AI ai;
-		int instrCounter;
-		int shapeID;
+
+		int instrCounter, deadPlayer;
 		char player;
+		bool turn;	//After a player has a move, turn becomes true.
+
+		bool selectShape;
+		int shapeID;
 		Shape selected;
-		bool turn, selectShape;
-		int deadPlayer;
 
 	public:
 		Play();
@@ -44,7 +46,6 @@ class Play
 		//
 		void priorityAdvantage();
 
-		void init();
 		void printBoard();
 		string winner();
 };

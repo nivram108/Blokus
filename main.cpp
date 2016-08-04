@@ -18,7 +18,6 @@ int main()
 	srand(time(NULL));
 	bool flag = false;
 	int mode;
-	play.init();
 
 	cout << "Game Start." << endl << endl;
 	cout << "|--------------------------------- |" << endl;

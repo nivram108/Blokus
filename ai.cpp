@@ -54,7 +54,7 @@ void AI::autoPlace(int id, char player)
 //If random place fails too many time, call autoPlace.
 void AI::autoPlay(char player)
 {
-	if (game.isGameEndAI(player) == false)
+	if (game.isGameAliveAI(player) == false)
 		return;
 
 	//init
@@ -64,7 +64,7 @@ void AI::autoPlay(char player)
 	//select a shape
 	int shapeID = rand()%21;
 	// shape is unavailable or shape can't be placed
-	while (game.isPieceUse(shapeID) || game.hasPlaceToPut(shapeID, player) == false)
+	while (game.isPieceUse(shapeID) || !game.hasPlaceToPut(shapeID, player))
 		shapeID = rand()%21;
 	selected = game.getShape(shapeID);
 	//rand flip
@@ -93,7 +93,7 @@ void AI::twoAIs()
 	bool turn = 0;// A
 	char player = (turn == 0) ? 'A' : 'B';
 	string junk;
-	while (game.isGameEndAI('A') == true || game.isGameEndAI('B') == true) {
+	while (game.isGameAliveAI('A') == true || game.isGameAliveAI('B') == true) {
 	// 	game.setPlayer(player);
 	// 	autoPlay(player);
 	// 	turn = !turn;

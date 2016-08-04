@@ -12,7 +12,6 @@ Shape::Shape()
 	memset(this->x, 0, sizeof(this->x));
 	memset(this->y, 0, sizeof(this->y));
 
-	//the point to identify, default(0,0)
 	this->uniX = 0;
 	this->uniY = 0;
 }
@@ -37,7 +36,7 @@ void Shape::set(const int& size, const string& xStr, const string& yStr)
 	}
 }
 
-bool Shape::isshape(const int& x, const int& y)
+bool Shape::isShape(const int& x, const int& y)
 {
 	for (int i=0; i<this->size; i++) {
 		if (x==this->x[i] && y==this->y[i])
@@ -48,10 +47,8 @@ bool Shape::isshape(const int& x, const int& y)
 
 void Shape::flip()
 {
-	for (int i=0; i<5; i++)    //flip
+	for (int i=0; i<5; i++)
 		this->x[i] *= -1;
-	this->uniX *= -1;
-	//this->normalizeShape();
 }
 
 void Shape::turnClockwise()
@@ -62,26 +59,9 @@ void Shape::turnClockwise()
 		this->x[i] = this->y[i];
 		this->y[i] = -1 * tmp;
 	}
-	tmp = uniX;
-	uniX = uniY;
-	uniY = -1 * tmp;
-	//this->normalizeShape();
 }
 
-void Shape::turnCounter_Clockwise()
-{
-	int tmp;
-	for (int i=0; i<5; i++) {
-		tmp = this->x[i];
-		this->x[i] = -1 * this->y[i];
-		this->y[i] = tmp;
-	}
-	tmp = uniX;
-	uniX = -1 * uniY;
-	uniY = tmp;
-	//this->normalizeShape();
-}
-
+// Help printShape() to print the object.
 void Shape::normalizeShape()
 {
 	int minX = 0, minY = 0;
@@ -97,14 +77,15 @@ void Shape::normalizeShape()
 	this->uniY -= minY;
 }
 
-
 void Shape::printShape()
 {
+	// The original uniX and uniY keep (0,0) after normalization.
 	Shape tmp = *this;
 	tmp.normalizeShape();
+
 	for (int i=0; i<5; i++) {
 		for (int j=0; j<5; j++) {
-			if (tmp.isshape(i, j)) {
+			if (tmp.isShape(i, j)) {
 				if (i==tmp.uniX && j==tmp.uniY)
 					cout << "*";
 				else

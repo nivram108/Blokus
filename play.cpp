@@ -21,115 +21,125 @@ using namespace std;
 
 Play::Play()
 {
-	this->instrCounter = 0;
-	this->turn = true;
-	this->selectShape = false;
+	this->game.init();
+	this->game.setPlayer('A');
+
+	this->instrCounter = 1;
 	this->deadPlayer = 0;
+	this->player = 'A';
+	this->turn = false;
+
+	this->selectShape = false;
+	this->selected = this->game.getShape(0);
 }
 
 //Playing mode of 2 human players.
 void Play::twoPlayers()
 {
 	int instr;
-	bool legalMove = false;
 
 	while (true) {
 		cout << endl;
-		this->player = (this->turn)? 'A': 'B';
-		this->game.setPlayer(this->player);
 
-		// check if player still have move to implement.
-		if (this->deadPlayer == 2) {
-			cout << "Game is ended." << endl;
-			return;
-		}
-		if (this->game.isGameEnd(this->player) == false) {
+		if (this->turn) {
+			this->player = (this->player=='B')? 'A': 'B';
+			this->turn = false;
 			this->selectShape = false;
-			this->turn = !this->turn;
-			this->deadPlayer++;
+			this->game.setPlayer(this->player);
+
+			if (!this->game.isGameAlive(this->player)) {
+				this->deadPlayer++;
+				this->turn = true;
+
+				// check if player still have move to implement.
+				if (this->deadPlayer == 2) {
+					cout << "Game is ended." << endl;
+					return;
+				}
+				continue;
+			}
 		}
-		else {
-			this->deadPlayer = 0;
-			cout << "| [instruction #" << this->instrCounter << "] you can press 1~7:" << "\n|\n";
-			cout << "|\t1) Select a shape\n|\t2) Flip\n|\t3) Rotate clockwise\n|\t4) Next move\n|\t5) Print the board\n|\t6) List remaining shapes\n|\t7) Check the condition\n|\t999) EXIT\n|\n";
-			cout << "|--------------------------------- " << endl;
-			cout << " Blockus >> ";
+		
+		this->deadPlayer = 0;
+		cout << "|--------------------------------- \n|" << endl;
+		cout << "| [instruction #" << this->instrCounter << "] you can press 1~7:" << "\n|\n";
+		cout << "|\t1) Select a shape\n|\t2) Flip\n|\t3) Rotate clockwise\n|\t4) Next move\n|\t5) Print the board\n|\t6) List remaining shapes\n|\t7) Check the condition\n|\t999) EXIT\n|\n";
+		cout << "|--------------------------------- " << endl;
+		cout << " Blockus>>";
 
-			cin >> instr;
-			if (instr == 999)
-				break;
-			if (instr == 1) {		// select shape.
-				this->selectShape = true;
-				cout<<"shape index:";
-				int tmpID;
-				cin >> tmpID;
+		cin >> instr;
+		if (instr == 999)
+			break;
+		if (instr == 1) {		// Select a shape
+			this->selectShape = true;
+			cout<<"shape index:";
+			int tmpID;
+			cin >> tmpID;
 
-				if (this->game.checkShapeID(tmpID)) {
-					if (this->game.isPieceUse(tmpID)) {
-						cout << "shapeID: " << tmpID << " already on the board, choose other one." << endl;
-						continue;
-					}
-					else {
-						this->shapeID = tmpID;
-						this->selected = this->game.getShape(this->shapeID);
-						this->selected.printShape();
-					}
+			if (this->game.checkShapeID(tmpID)) {
+				if (this->game.isPieceUse(tmpID)) {
+					cout << "shapeID: " << tmpID << " already on the board, choose other one." << endl;
+					continue;
 				}
 				else {
-					cout << "We don't have this index! Please retry the instruction!" << endl;
-					continue;
+					this->shapeID = tmpID;
+					this->selected = this->game.getShape(this->shapeID);
+					this->selected.printShape();
 				}
-			}
-			else if (instr == 2) {	// Flip
-				if (this->selectShape == false) {
-					cout << "Please Select a shape." << endl;
-					continue;
-				}
-				this->selected.flip();
-				this->selected.printShape();
-			}
-			else if (instr == 3) { // Turn
-				if (this->selectShape == false) {
-					cout << "Please Select a shape." << endl;
-					continue;
-				}
-				this->selected.turnClockwise();
-				this->selected.printShape();
-			}
-			else if (instr == 4) { //player_move.
-				cout << "shapeID:" << this->shapeID << endl;
-				this->game.printBoard();
-				if (this->selectShape == false) {	//Hasn't select yet
-					cout << "Please Select a shape." << endl;
-					continue;
-				}
-				this->selected.printShape();
-				int x, y;
-				cout << "[ " << this->player << "'s turn ] input x, y:";
-				cin >> x >> y;
-				legalMove = this->game.playerMove(this->selected, this->shapeID, this->player, x, y);
-				if (legalMove == true) {
-					this->game.setPieceUse(this->shapeID);
-					this->instrCounter++;
-					this->selectShape = false;
-					this->turn = !this->turn;
-				}
-			}
-			else if (instr == 5) {	//map.
-				this->game.printBoard();
-			}
-			else if (instr == 6) {	//list shape.
-				this->game.listShapes(this->player);
-			}
-			else if (instr == 7) {
-				this->game.isGameEnd(this->player);
 			}
 			else {
-				cout<<"Not a command."<<endl;
+				cout << "We don't have this index! Please retry the instruction!" << endl;
+				continue;
 			}
 		}
+		else if (instr == 2) {	// Flip
+			if (this->selectShape == false) {
+				cout << "Please Select a shape." << endl;
+				continue;
+			}
+			this->selected.flip();
+			this->selected.printShape();
+		}
+		else if (instr == 3) { // Rotate clockwise
+			if (this->selectShape == false) {
+				cout << "Please Select a shape." << endl;
+				continue;
+			}
+			this->selected.turnClockwise();
+			this->selected.printShape();
+		}
+		else if (instr == 4) { // Next move
+			cout << "shapeID:" << this->shapeID << endl;
+			this->game.printBoard();
+			if (this->selectShape == false) {	//Hasn't select yet
+				cout << "Please Select a shape." << endl;
+				continue;
+			}
+			this->selected.printShape();
+			int x, y;
+			cout << "[ " << this->player << "'s turn ] input x, y:";
+			cin >> x >> y;
+			if ( this->game.playerMove(this->selected, this->shapeID, this->player, x, y) ) {
+				this->game.setPieceUse(this->shapeID);
+				this->instrCounter++;
+				this->turn = true;
+			}
+			else
+				cout << this->game.getErrMsg() << endl;
+		}
+		else if (instr == 5) {	// Print the board
+			this->game.printBoard();
+		}
+		else if (instr == 6) {	// List remaining shapes
+			this->game.listShapes(this->player);
+		}
+		else if (instr == 7) {	// Check the condition
+			this->game.isGameAlive(this->player);
+		}
+		else {
+			cout<<"Not a command."<<endl;
+		}
 	}
-
 }
 
 //mode of two Artificial Idiots battle.
@@ -142,100 +152,118 @@ void Play::twoAIs()
 void Play::playerAI()
 {
 	int instr;
-	bool legalMove = false;
 
 	while (true) {
-		if (this->turn == 0) {
-			ai.autoPlay('B');
-			this->turn = !this->turn;
-			continue;
-		}
 		cout << endl;
-		this->player = (this->turn)?'A':'B';
-		this->game.setPlayer(this->player);
-
-		// check if player still have move to implement.
-		if (this->deadPlayer == 2) {
-			cout << "Game is ended." << endl;
-			return;
-		}
-		if (this->game.isGameEnd(this->player) == false) {
+		
+		if (this->turn) {
+			this->player = 'B';
 			this->selectShape = false;
-			this->turn = !this->turn;
-			this->deadPlayer++;
+			this->game.setPlayer('B');
+
+			if (!this->game.isGameAlive('B')) {
+				this->deadPlayer++;
+
+				// check if player still have move to implement.
+				if (this->deadPlayer == 2) {
+					cout << "Game is ended." << endl;
+					return;
+				}
+			}
+			else
+				ai.autoPlay('B');
+
+			this->player = 'A';
+			this->turn = false;
+			this->selectShape = false;
+			this->game.setPlayer('A');
+
+			if (!this->game.isGameAlive('A')) {
+				this->deadPlayer++;
+				this->turn = true;
+
+				// check if player still have move to implement.
+				if (this->deadPlayer == 2) {
+					cout << "Game is ended." << endl;
+					return;
+				}
+				continue;
+			}
 		}
-		else {
-			this->deadPlayer = 0;
-			cout << "| [instruction #" << this->instrCounter << "] you can press 1~7:" <<"\n|\n";
-			cout << "|\t1) Select a shape\n|\t2) Flip\n|\t3) Rotate clockwise\n|\t4) Next move\n|\t5) Print the board\n|\t6) List remaining shapes\n|\t7) Check the condition\n|\t999) EXIT\n|\n";
-			cout << "|--------------------------------- " << endl;
-			cout << " Blockus >> ";
 
-			cin >> instr;
-			if (instr == 999)
-				break;
-			if (instr == 1) {		// select shape.
-				this->selectShape = true;
-				cout << "shape index:";
-				int tmpID;
-				cin >> tmpID;
+		// A's turn:
+		this->deadPlayer = 0;
+		cout << "|--------------------------------- \n|" << endl;
+		cout << "| [instruction #" << this->instrCounter << "] you can press 1~7:" <<"\n|\n";
+		cout << "|\t1) Select a shape\n|\t2) Flip\n|\t3) Rotate clockwise\n|\t4) Next move\n|\t5) Print the board\n|\t6) List remaining shapes\n|\t7) Check the condition\n|\t999) EXIT\n|\n";
+		cout << "|--------------------------------- " << endl;
+		cout << " Blockus>>";
 
-				if (this->game.checkShapeID (tmpID)) {
-					if (this->game.isPieceUse(tmpID)) {
-						cout << "shapeID: " << tmpID << " already on the board, choose other one." << endl;
-						continue;
-					}
-					else {
-						this->shapeID = tmpID;
-						this->selected = this->game.getShape(this->shapeID);
-						this->selected.printShape();
-					}
+		cin >> instr;
+		if (instr == 999)
+			break;
+		if (instr == 1) {		// Select a shape
+			this->selectShape = true;
+			cout << "shape index:";
+			int tmpID;
+			cin >> tmpID;
+
+			if (this->game.checkShapeID (tmpID)) {
+				if (this->game.isPieceUse(tmpID)) {
+					cout << "shapeID: " << tmpID << " already on the board, choose other one." << endl;
+					continue;
 				}
 				else {
-					cout << "no this index! re do instruction!." << endl;
-					continue;
+					this->shapeID = tmpID;
+					this->selected = this->game.getShape(this->shapeID);
+					this->selected.printShape();
 				}
-			}
-			else if (instr == 2) {	// Flip
-				this->selected.flip();
-				this->selected.printShape();
-			}
-			else if (instr == 3) { // Turn
-				this->selected.turnClockwise();
-				this->selected.printShape();
-			}
-			else if (instr == 4) { //player_move.
-				cout << "shapeID:" << this->shapeID << endl;
-				this->game.printBoard();
-				if (this->selectShape == false) {	//Hasn't select yet
-					cout<<"Please Select a shape."<<endl;
-					continue;
-				}
-				this->selected.printShape();
-
-				int x, y;
-				cout << "[ " << this->player << "'s turn ] input x, y:";
-				cin >> x >> y;
-				legalMove = this->game.playerMove(this->selected, this->shapeID, this->player, x, y);
-				if (legalMove == true) {
-					this->game.setPieceUse(this->shapeID);
-					this->instrCounter++;
-					this->selectShape = false;
-					this->turn = !this->turn;
-				}
-			}
-			else if (instr == 5) {	//map.
-				this->game.printBoard();
-			}
-			else if (instr == 6) {	//list shape.
-				this->game.listShapes(this->player);
-			}
-			else if (instr == 7) {
-				this->game.isGameEnd(this->player);
 			}
 			else {
-				cout<<"Not a command."<<endl;
+				cout << "no this index! re do instruction!." << endl;
+				continue;
 			}
+		}
+		else if (instr == 2) {	// Flip
+			this->selected.flip();
+			this->selected.printShape();
+		}
+		else if (instr == 3) { // Rotate clockwise
+			this->selected.turnClockwise();
+			this->selected.printShape();
+		}
+		else if (instr == 4) { // Next move
+			if (this->selectShape == false) {	//Hasn't select yet
+				cout<<"Please Select a shape."<<endl;
+				continue;
+			}
+			cout << "shapeID:" << this->shapeID << endl;
+			this->game.printBoard();
+			this->selected.printShape();
+
+			int x, y;
+			cout << "[ " << this->player << "'s turn ] input x, y:";
+			cin >> x >> y;
+			if ( this->game.playerMove(this->selected, this->shapeID, this->player, x, y) ) {
+				this->game.setPieceUse(this->shapeID);
+				this->instrCounter++;
+				this->selectShape = false;
+				this->turn = !this->turn;
+			}
+			else
+				cout << this->game.getErrMsg() << endl;
+		}
+		else if (instr == 5) {	// Print the board
+			this->game.printBoard();
+		}
+		else if (instr == 6) {	// List remaining shapes
+			this->game.listShapes(this->player);
+		}
+		else if (instr == 7) {	// Check the condition
+			this->game.isGameAlive(this->player);
+		}
+		else {
+			cout<<"Not a command."<<endl;
 		}
 	}
 }
@@ -270,14 +298,8 @@ void Play::priorityAdvantage()
 	cout << "|   " << endl << "| Result :" << "\n|\n";
 	cout << "| " << winA << " : " << winB << "\n|" << endl;
 	cout << "|   " << endl << "| Best Game :" << "\n|\n";
-	cout << "| " << this->game.getBestA() << " : " << this->game.getBestB() << "\n|" << endl;
+	cout << "| " << this->game.getBstRngA() << " : " << this->game.getBstRngB() << "\n|" << endl;
 	cout << "|--------------------------------- \n";
-}
-
-void Play::init()
-{
-	this->game.init();
-	this->selected = this->game.getShape(0);
 }
 
 void Play::printBoard()

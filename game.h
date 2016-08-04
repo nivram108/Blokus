@@ -28,10 +28,11 @@ using namespace std;
 class Game
 {
 private:
-    int biggestRange, bestA, bestB;
+    int biggestRange, biggestRangeA, biggestRangeB;
     vector<Shape> shapes;
     char board[14][14];
     bool firstStepFlagA, firstStepFlagB;
+    string errorMessage;
 
     //list of whether the piece is used(true) or not(false)
     bool piecesUseA[21], piecesUseB[21];
@@ -62,33 +63,33 @@ public:
     bool isPieceUse(const int& k);
     //Set the selected piece used
     void setPieceUse(const int& k);
-    //Get bestA
-    int getBestA();
-    //Get bestB
-    int getBestB();
+    //Get biggestRangeA
+    int getBstRngA();
+    //Get biggestRangeB
+    int getBstRngB();
+    //Get errorMessage
+    string getErrMsg();
 
     //List the shapes of the player that have not been placed yet.
     void listShapes(const char& player);
     //Print out the current board status.
     void printBoard();
-    //check if the selected shape index is between 0 and 20.
+    //Check if the selected shape index is between 0 and 20.
     bool checkShapeID(const int& i);
     //To check the move is legal or not, that is, Connected, not Touched and Spare to place.
     bool isLegalMove(Shape& shp, const int& x, const int& y, const char& player);
-    //To tell why the move is illegal
-    string reportIllegal(Shape& shp, const int& x, const int& y, const char& player);
     //Make a single move. Return true if the move is success.
     bool playerMove(Shape& shp, const int& shapeID, const char& player, const int& x, const int& y);
-    //To check if the game is ended.
-    bool isGameEnd(const char& player);
+    //To check if the player have no shape to put and his turn is ended.
+    bool isGameAlive(const char& player);
     //To return the winner of the game.
     string winner();
 
     //----------------------------AI's NEED--------------------------------//
     //To check if the shape can be place anywhere or not.
     bool hasPlaceToPut(const int& id, const char& player);
-    //Checking game is ended or not, but without print anything. ( for AI )
-    bool isGameEndAI(const char& player);
+    //Same as isGameAlive, but without print anything. ( for AI )
+    bool isGameAliveAI(const char& player);
 };
 
 #endif
