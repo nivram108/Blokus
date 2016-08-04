@@ -30,7 +30,6 @@ class Play
 		int instrCounter, deadPlayer;
 		char player;
 		bool turn;	//After a player has a move, turn becomes true.
-
 		bool selectShape;
 		int shapeID;
 		Shape selected;

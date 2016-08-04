@@ -37,30 +37,44 @@ Play::Play()
 void Play::twoPlayers()
 {
 	int instr;
-
+	int isPlayerDead[2] = {0};
+	int checkDead;
 	while (true) {
 		cout << endl;
 
 		if (this->turn) {
-			this->player = (this->player=='B')? 'A': 'B';
+			cout << "in side" << endl;
+			//this->player = (this->player=='B')? 'A': 'B';
+			if (this->player=='B') {
+				this->player = 'A';
+				checkDead = 0;
+			} else {
+				this->player = 'B';
+				checkDead = 1;
+			}
 			this->turn = false;
 			this->selectShape = false;
 			this->game.setPlayer(this->player);
 
-			if (!this->game.isGameAlive(this->player)) {
-				this->deadPlayer++;
-				this->turn = true;
-
-				// check if player still have move to implement.
-				if (this->deadPlayer == 2) {
+			// if we need to check this person`s placement condition
+			if (isPlayerDead[checkDead]) {
+				//cout << "this plyer not dead yet" << endl;
+				if(!this->game.isGameAlive(this->player)) {
+					//cout << "wow we find out you`re dead!" << endl;
+					isPlayerDead[checkDead] = 1;	// mark this player can`t play anymore.
+					this->turn = true;
+					continue;
+				}
+			} else {
+				// we already know this player can`t play, check if all two can`t play.
+				if(isPlayerDead[0]==1 && isPlayerDead[1]==1) {
 					cout << "Game is ended." << endl;
 					return;
 				}
-				continue;
 			}
 		}
 		
-		this->deadPlayer = 0;
+		//this->deadPlayer = 0;
 		cout << "|--------------------------------- \n|" << endl;
 		cout << "| [instruction #" << this->instrCounter << "] you can press 1~7:" << "\n|\n";
 		cout << "|\t1) Select a shape\n|\t2) Flip\n|\t3) Rotate clockwise\n|\t4) Next move\n|\t5) Print the board\n|\t6) List remaining shapes\n|\t7) Check the condition\n|\t999) EXIT\n|\n";
