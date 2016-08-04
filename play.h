@@ -23,30 +23,30 @@ using namespace std;
 
 class Play
 {
-private:
-	Game game;
-	AI ai;
-	int instrCounter;
-	int shapeID;
-	char player;
-	Shape selected;
-    bool turn, selectShape;
-    int deadPlayer;
+	private:
+		Game game;
+		AI ai;
+		int instrCounter;
+		int shapeID;
+		char player;
+		Shape selected;
+		bool turn, selectShape;
+		int deadPlayer;
 
-public:
-	Play();
-	//Playing mode of 2 human players.
-	void twoPlayers();
-	//mode of two Artificial Idiots battle.
-	void twoAIs();
-	//Playing mode of human v.s. Artificial Idiot
-	void playerAI();
-	//
-	void priorityAdvantage();
+	public:
+		Play();
+		//Playing mode of 2 human players.
+		void twoPlayers();
+		//mode of two Artificial Idiots battle.
+		void twoAIs();
+		//Playing mode of human v.s. Artificial Idiot
+		void playerAI();
+		//
+		void priorityAdvantage();
 
-	void init();
-	void printBoard();
-    string winner();
+		void init();
+		void printBoard();
+		string winner();
 };
 
 

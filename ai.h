@@ -22,17 +22,17 @@ using namespace std;
 
 class AI
 {
-private:
-	Game game;
-public:
-	AI();
+	private:
+		Game game;
+	public:
+		AI();
 
-	// If autoPlay fails to place THE shape by random, place it by brutal force
-	void autoPlace(int id, char player);
-	//Play a round for Artificial Idiot. Random everything.
-	void autoPlay(char player);
-	//mode of two Artificial Idiots battle.
-	void twoAIs();
+		// If autoPlay fails to place THE shape by random, place it by brutal force
+		void autoPlace(int id, char player);
+		//Play a round for Artificial Idiot. Random everything.
+		void autoPlay(char player);
+		//mode of two Artificial Idiots battle.
+		void twoAIs();
 };
 
 #endif

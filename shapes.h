@@ -10,29 +10,29 @@ using namespace std;
 
 class Shape
 {
-private:
-    int size;
-    int x[5];
-    int y[5];
+	private:
+		int size;
+		int x[5];
+		int y[5];
 
-    //the point to identify
-    int uniX;
-    int uniY;
-	bool isshape(const int& x, const int& y);
-	void normalizeShape();
+		//the point to identify
+		int uniX;
+		int uniY;
+		bool isshape(const int& x, const int& y);
+		void normalizeShape();
 
-public:
-    Shape();
-    Shape(const Shape& shp);
-	void set(const int& size, const string& xStr, const string& yStr);
-	void flip();
-	void turnClockwise();
-	void turnCounter_Clockwise();
-	void printShape();
-	void operator = (const Shape& shp);
-	int getSize();
-	int getPosX(const int& k);
-	int getPosY(const int& k);
+	public:
+		Shape();
+		Shape(const Shape& shp);
+		void set(const int& size, const string& xStr, const string& yStr);
+		void flip();
+		void turnClockwise();
+		void turnCounter_Clockwise();
+		void printShape();
+		void operator = (const Shape& shp);
+		int getSize();
+		int getPosX(const int& k);
+		int getPosY(const int& k);
 };
 
 Shape assignshape_00();
