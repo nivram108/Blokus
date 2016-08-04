@@ -57,7 +57,7 @@ void Play::twoPlayers()
 			this->game.setPlayer(this->player);
 
 			// if we need to check this person`s placement condition
-			if (isPlayerDead[checkDead]) {
+			if (!isPlayerDead[checkDead]) {
 				//cout << "this plyer not dead yet" << endl;
 				if(!this->game.isGameAlive(this->player)) {
 					//cout << "wow we find out you`re dead!" << endl;
@@ -66,11 +66,13 @@ void Play::twoPlayers()
 					continue;
 				}
 			} else {
+				//cout << "this plyer dead already" << endl;
 				// we already know this player can`t play, check if all two can`t play.
 				if(isPlayerDead[0]==1 && isPlayerDead[1]==1) {
 					cout << "Game is ended." << endl;
 					return;
 				}
+				this->turn = true;
 			}
 		}
 		
