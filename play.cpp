@@ -8,7 +8,6 @@
 #include <string>
 #include "shapes.h"
 #include "game.h"
-#include "ai.h"
 #include "play.h"
 using namespace std;
 
@@ -25,58 +24,18 @@ Play::Play()
 	this->game.setPlayer('A');
 
 	this->instrCounter = 1;
-	this->deadPlayer = 0;
-	this->player = 'A';
-	this->turn = false;
 
 	this->selectShape = false;
 	this->selected = this->game.getShape(0);
 }
 
-//Playing mode of 2 human players.
-void Play::twoPlayers()
+//The assigned player plays the game.
+bool Play::playerPlay(const char& player)
 {
 	int instr;
-	int isPlayerDead[2] = {0};
-	int checkDead;
+	this->selectShape = false;
+
 	while (true) {
-		cout << endl;
-
-		if (this->turn) {
-			cout << "in side" << endl;
-			//this->player = (this->player=='B')? 'A': 'B';
-			if (this->player=='B') {
-				this->player = 'A';
-				checkDead = 0;
-			} else {
-				this->player = 'B';
-				checkDead = 1;
-			}
-			this->turn = false;
-			this->selectShape = false;
-			this->game.setPlayer(this->player);
-
-			// if we need to check this person`s placement condition
-			if (!isPlayerDead[checkDead]) {
-				//cout << "this plyer not dead yet" << endl;
-				if(!this->game.isGameAlive(this->player)) {
-					//cout << "wow we find out you`re dead!" << endl;
-					isPlayerDead[checkDead] = 1;	// mark this player can`t play anymore.
-					this->turn = true;
-					continue;
-				}
-			} else {
-				//cout << "this plyer dead already" << endl;
-				// we already know this player can`t play, check if all two can`t play.
-				if(isPlayerDead[0]==1 && isPlayerDead[1]==1) {
-					cout << "Game is ended." << endl;
-					return;
-				}
-				this->turn = true;
-			}
-		}
-		
-		//this->deadPlayer = 0;
 		cout << "|--------------------------------- \n|" << endl;
 		cout << "| [instruction #" << this->instrCounter << "] you can press 1~7:" << "\n|\n";
 		cout << "|\t1) Select a shape\n|\t2) Flip\n|\t3) Rotate clockwise\n|\t4) Next move\n|\t5) Print the board\n|\t6) List remaining shapes\n|\t7) Check the condition\n|\t999) EXIT\n|\n";
@@ -85,9 +44,8 @@ void Play::twoPlayers()
 
 		cin >> instr;
 		if (instr == 999)
-			break;
+			return true;
 		if (instr == 1) {		// Select a shape
-			this->selectShape = true;
 			cout<<"shape index:";
 			int tmpID;
 			cin >> tmpID;
@@ -98,6 +56,7 @@ void Play::twoPlayers()
 					continue;
 				}
 				else {
+					this->selectShape = true;
 					this->shapeID = tmpID;
 					this->selected = this->game.getShape(this->shapeID);
 					this->selected.printShape();
@@ -132,13 +91,14 @@ void Play::twoPlayers()
 				continue;
 			}
 			this->selected.printShape();
+			
 			int x, y;
-			cout << "[ " << this->player << "'s turn ] input x, y:";
+			cout << "[ " << player << "'s turn ] input x, y:";
 			cin >> x >> y;
-			if ( this->game.playerMove(this->selected, this->shapeID, this->player, x, y) ) {
+			if ( this->game.playerMove(this->selected, this->shapeID, player, x, y) ) {
 				this->game.setPieceUse(this->shapeID);
 				this->instrCounter++;
-				this->turn = true;
+				return false;
 			}
 			else
 				cout << this->game.getErrMsg() << endl;
@@ -147,13 +107,167 @@ void Play::twoPlayers()
 			this->game.printBoard();
 		}
 		else if (instr == 6) {	// List remaining shapes
-			this->game.listShapes(this->player);
+			this->game.listShapes(player);
 		}
 		else if (instr == 7) {	// Check the condition
-			this->game.isGameAlive(this->player);
+			this->game.isGameAlive(player);
 		}
 		else {
 			cout<<"Not a command."<<endl;
+		}
+	}
+}
+
+// If autoPlay fails to place THE shape by random, place it by brutal force.
+void Play::autoPlace(const int& id, const char& player)
+{
+	Shape selected;
+	int counter  = 0;
+	selected = game.getShape(id);
+
+	for (int i=0; i<14; i++) {      
+		//Brutal force placement
+		for (int j=0; j<14; j++) {
+			// two flip.
+			for (int f=0; f<2; f++) {
+				if (f > 0) selected.flip();
+				// and four direction.
+				for (int clockwise = 0; clockwise < 4; clockwise++) {
+					if (clockwise > 0) selected.turnClockwise();
+					if (game.isLegalMove(selected, i, j, player)) {
+						// if this piece can put => return true.
+						game.playerMove(selected, id, player, i, j);
+						game.printBoard();
+						return ;
+					}
+				}
+			}
+		}
+	}
+	return;
+}
+
+//Play a round for Artificial Idiot. Random everything.
+//Random pick a unplaced shape, random flip and turn, random place*
+//If random place fails too many time, call autoPlace.
+void Play::autoPlay(const char& player)
+{
+	if (game.isGameAliveAI(player) == false)
+		return;
+
+	//init
+	game.setPlayer(player);
+	Shape selected;
+
+	//select a shape
+	int shapeID = rand()%21;
+	// shape is unavailable or shape can't be placed
+	while (game.isPieceUse(shapeID) || !game.hasPlaceToPut(shapeID, player))
+		shapeID = rand()%21;
+	selected = game.getShape(shapeID);
+	//rand flip
+	if (rand()%2 == 1)
+		selected.flip();
+
+	//rand turn
+	int turn = rand()%4;
+	for (int i=0; i<turn; i++)
+		selected.turnClockwise();
+
+	//rand place
+	int x = rand()%14, y = rand()%14;
+	while (game.playerMove(selected, shapeID, player, x, y) == false) { // move is illegal
+		x = rand()%14;
+		y = rand()%14;
+	}
+	game.setPieceUse(shapeID);
+	cout << player << "'s step\n^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^" << endl;
+	return;
+}
+
+//Playing mode of 2 human players.
+void Play::twoPlayers()
+{
+	bool deadA = false, deadB = false;
+	bool quit = false;
+	while (true) {
+		cout << endl;
+		cout << "in side" << endl;
+		if (!deadA) {
+			this->game.setPlayer('A');
+			if (!this->game.isGameAlive('A')) {
+				//cout << "wow we find out you're dead!" << endl;
+				deadA = true;
+				if (deadB) {
+					// we already know this player can't play, check if all two can't play.
+					cout << "Game is ended." << endl;
+					return;
+				}
+			}
+			else
+				quit = playerPlay('A');
+		}
+		if (quit) return;
+
+		cout << endl;
+		cout << "in side" << endl;
+		if (!deadB) {
+			this->game.setPlayer('B');
+			if (!this->game.isGameAlive('B')) {
+				//cout << "wow we find out you're dead!" << endl;
+				deadB = true;
+				if (deadA) {
+					// we already know this player can't play, check if all two can't play.
+					cout << "Game is ended." << endl;
+					return;
+				}
+			}
+			else
+				quit = playerPlay('B');
+		}
+		if (quit) return;
+	}
+}
+
+//Playing mode of human v.s. Artificial Idiot
+void Play::playerAI()
+{
+	bool deadA = false, deadB = false;
+	bool quit = false;
+	while (true) {
+		cout << endl;
+		cout << "in side" << endl;
+		if (!deadA) {
+			this->game.setPlayer('A');
+			if (!this->game.isGameAlive('A')) {
+				//cout << "wow we find out you're dead!" << endl;
+				deadA = true;
+				if (deadB) {
+					// we already know this player can't play, check if all two can't play.
+					cout << "Game is ended." << endl;
+					return;
+				}
+			}
+			else
+				quit = playerPlay('A');
+		}
+		if (quit) return;
+
+		cout << endl;
+		cout << "in side" << endl;
+		if (!deadB) {
+			this->game.setPlayer('B');
+			if (!this->game.isGameAlive('B')) {
+				//cout << "wow we find out you're dead!" << endl;
+				deadB = true;
+				if (deadA) {
+					// we already know this player can't play, check if all two can't play.
+					cout << "Game is ended." << endl;
+					return;
+				}
+			}
+			else
+				autoPlay('B');
 		}
 	}
 }
@@ -161,127 +275,55 @@ void Play::twoPlayers()
 //mode of two Artificial Idiots battle.
 void Play::twoAIs()
 {
-	ai.twoAIs();
-}
-
-//Playing mode of human v.s. Artificial Idiot
-void Play::playerAI()
-{
-	int instr;
-
+/*
+	bool turn = 0;// A
+	char player = (turn == 0) ? 'A' : 'B';
+	string junk;
+	while (game.isGameAliveAI('A') == true || game.isGameAliveAI('B') == true) {
+	// 	game.setPlayer(player);
+	// 	autoPlay(player);
+	// 	turn = !turn;
+	// 	cin >> junk;
+	// 	player = (turn == 0) ? 'A' : 'B';
+	}
+*/
+	bool deadA = false, deadB = false;
 	while (true) {
 		cout << endl;
-		
-		if (this->turn) {
-			this->player = 'B';
-			this->selectShape = false;
-			this->game.setPlayer('B');
-
-			if (!this->game.isGameAlive('B')) {
-				this->deadPlayer++;
-
-				// check if player still have move to implement.
-				if (this->deadPlayer == 2) {
-					cout << "Game is ended." << endl;
-					return;
-				}
-			}
-			else
-				ai.autoPlay('B');
-
-			this->player = 'A';
-			this->turn = false;
-			this->selectShape = false;
+		cout << "in side" << endl;
+		if (!deadA) {
 			this->game.setPlayer('A');
-
 			if (!this->game.isGameAlive('A')) {
-				this->deadPlayer++;
-				this->turn = true;
-
-				// check if player still have move to implement.
-				if (this->deadPlayer == 2) {
+				//cout << "wow we find out you're dead!" << endl;
+				deadA = true;
+				if (deadB) {
+					// we already know this player can't play, check if all two can't play.
 					cout << "Game is ended." << endl;
 					return;
 				}
-				continue;
-			}
-		}
-
-		// A's turn:
-		this->deadPlayer = 0;
-		cout << "|--------------------------------- \n|" << endl;
-		cout << "| [instruction #" << this->instrCounter << "] you can press 1~7:" <<"\n|\n";
-		cout << "|\t1) Select a shape\n|\t2) Flip\n|\t3) Rotate clockwise\n|\t4) Next move\n|\t5) Print the board\n|\t6) List remaining shapes\n|\t7) Check the condition\n|\t999) EXIT\n|\n";
-		cout << "|--------------------------------- " << endl;
-		cout << " Blockus>>";
-
-		cin >> instr;
-		if (instr == 999)
-			break;
-		if (instr == 1) {		// Select a shape
-			this->selectShape = true;
-			cout << "shape index:";
-			int tmpID;
-			cin >> tmpID;
-
-			if (this->game.checkShapeID (tmpID)) {
-				if (this->game.isPieceUse(tmpID)) {
-					cout << "shapeID: " << tmpID << " already on the board, choose other one." << endl;
-					continue;
-				}
-				else {
-					this->shapeID = tmpID;
-					this->selected = this->game.getShape(this->shapeID);
-					this->selected.printShape();
-				}
-			}
-			else {
-				cout << "no this index! re do instruction!." << endl;
-				continue;
-			}
-		}
-		else if (instr == 2) {	// Flip
-			this->selected.flip();
-			this->selected.printShape();
-		}
-		else if (instr == 3) { // Rotate clockwise
-			this->selected.turnClockwise();
-			this->selected.printShape();
-		}
-		else if (instr == 4) { // Next move
-			if (this->selectShape == false) {	//Hasn't select yet
-				cout<<"Please Select a shape."<<endl;
-				continue;
-			}
-			cout << "shapeID:" << this->shapeID << endl;
-			this->game.printBoard();
-			this->selected.printShape();
-
-			int x, y;
-			cout << "[ " << this->player << "'s turn ] input x, y:";
-			cin >> x >> y;
-			if ( this->game.playerMove(this->selected, this->shapeID, this->player, x, y) ) {
-				this->game.setPieceUse(this->shapeID);
-				this->instrCounter++;
-				this->selectShape = false;
-				this->turn = !this->turn;
 			}
 			else
-				cout << this->game.getErrMsg() << endl;
+				autoPlay('A');
 		}
-		else if (instr == 5) {	// Print the board
-			this->game.printBoard();
-		}
-		else if (instr == 6) {	// List remaining shapes
-			this->game.listShapes(this->player);
-		}
-		else if (instr == 7) {	// Check the condition
-			this->game.isGameAlive(this->player);
-		}
-		else {
-			cout<<"Not a command."<<endl;
+
+		cout << endl;
+		cout << "in side" << endl;
+		if (!deadB) {
+			this->game.setPlayer('B');
+			if (!this->game.isGameAlive('B')) {
+				//cout << "wow we find out you're dead!" << endl;
+				deadB = true;
+				if (deadA) {
+					// we already know this player can't play, check if all two can't play.
+					cout << "Game is ended." << endl;
+					return;
+				}
+			}
+			else
+				autoPlay('B');
 		}
 	}
+
 }
 
 void Play::priorityAdvantage()
@@ -301,7 +343,7 @@ void Play::priorityAdvantage()
 	bool change = false;
 	while (times--) {
 		this->game.init();
-		ai.twoAIs();
+		twoAIs();
 		cout << times << " to go....";
 		if (this->game.winner() == "A")
 			winA++;

@@ -6,10 +6,7 @@
 #include <ctime>
 #include <fstream>
 #include <string>
-//#include "shapes.h"
-//#include "game.h"
 #include "play.h"
-#include "ai.h"
 using namespace std;
 
 int main()
@@ -42,8 +39,8 @@ int main()
 	}
 	else
 		play.priorityAdvantage();
+	
 	string s = "";
-
 	while (s != "seeResult" && pause) {
 		cout << endl;
 		cout << "|--------------------------------- |" << endl;
