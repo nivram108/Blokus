@@ -33,7 +33,7 @@ class Play
 
 	public:
 		Play();
-		//The assigned player plays the game.
+		//The assigned player plays the game. True when the game is quitted.
 		bool playerPlay(const char& player);
 		//If autoPlay fails to place THE shape by random, place it by brutal force.
 		void autoPlace(const int& id, const char& player);

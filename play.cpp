@@ -29,7 +29,7 @@ Play::Play()
 	this->selected = this->game.getShape(0);
 }
 
-//The assigned player plays the game.
+//The assigned player plays the game. True when the game is quitted.
 bool Play::playerPlay(const char& player)
 {
 	int instr;
@@ -188,87 +188,62 @@ void Play::autoPlay(const char& player)
 //Playing mode of 2 human players.
 void Play::twoPlayers()
 {
-	bool deadA = false, deadB = false;
+	bool checkDead[2] = {0};
+	int player = 0;
 	bool quit = false;
 	while (true) {
 		cout << endl;
 		cout << "in side" << endl;
-		if (!deadA) {
-			this->game.setPlayer('A');
-			if (!this->game.isGameAlive('A')) {
+		if (!checkDead[player]) {
+			char ptmp = 'A' + player;
+			this->game.setPlayer(ptmp);
+			if (!this->game.isGameAlive(ptmp)) {
 				//cout << "wow we find out you're dead!" << endl;
-				deadA = true;
-				if (deadB) {
-					// we already know this player can't play, check if all two can't play.
+				checkDead[player] = true;
+				if (checkDead[ 1-player ]) {
+					// we already know this player can't play, check if the other can't play, either.
 					cout << "Game is ended." << endl;
 					return;
 				}
 			}
 			else
-				quit = playerPlay('A');
+				quit = playerPlay(ptmp);
 		}
 		if (quit) return;
-
-		cout << endl;
-		cout << "in side" << endl;
-		if (!deadB) {
-			this->game.setPlayer('B');
-			if (!this->game.isGameAlive('B')) {
-				//cout << "wow we find out you're dead!" << endl;
-				deadB = true;
-				if (deadA) {
-					// we already know this player can't play, check if all two can't play.
-					cout << "Game is ended." << endl;
-					return;
-				}
-			}
-			else
-				quit = playerPlay('B');
-		}
-		if (quit) return;
+		player = 1 - player;
 	}
 }
 
 //Playing mode of human v.s. Artificial Idiot
 void Play::playerAI()
 {
-	bool deadA = false, deadB = false;
+	bool checkDead[2] = {0};
+	int player = 0;
 	bool quit = false;
 	while (true) {
 		cout << endl;
 		cout << "in side" << endl;
-		if (!deadA) {
-			this->game.setPlayer('A');
-			if (!this->game.isGameAlive('A')) {
+		if (!checkDead[player]) {
+			char ptmp = 'A' + player;
+			this->game.setPlayer(ptmp);
+			if (!this->game.isGameAlive(ptmp)) {
 				//cout << "wow we find out you're dead!" << endl;
-				deadA = true;
-				if (deadB) {
-					// we already know this player can't play, check if all two can't play.
+				checkDead[player] = true;
+				if (checkDead[ 1-player ]) {
+					// we already know this player can't play, check if the other can't play, either.
 					cout << "Game is ended." << endl;
 					return;
 				}
 			}
-			else
-				quit = playerPlay('A');
+			else {
+				if (player==0)	// A
+					quit = playerPlay('A');
+				else
+					autoPlay('B');
+			}
 		}
 		if (quit) return;
-
-		cout << endl;
-		cout << "in side" << endl;
-		if (!deadB) {
-			this->game.setPlayer('B');
-			if (!this->game.isGameAlive('B')) {
-				//cout << "wow we find out you're dead!" << endl;
-				deadB = true;
-				if (deadA) {
-					// we already know this player can't play, check if all two can't play.
-					cout << "Game is ended." << endl;
-					return;
-				}
-			}
-			else
-				autoPlay('B');
-		}
+		player = 1 - player;
 	}
 }
 
@@ -287,43 +262,28 @@ void Play::twoAIs()
 	// 	player = (turn == 0) ? 'A' : 'B';
 	}
 */
-	bool deadA = false, deadB = false;
+	bool checkDead[2] = {0};
+	int player = 0;
 	while (true) {
 		cout << endl;
 		cout << "in side" << endl;
-		if (!deadA) {
-			this->game.setPlayer('A');
-			if (!this->game.isGameAlive('A')) {
+		if (!checkDead[player]) {
+			char ptmp = 'A' + player;
+			this->game.setPlayer(ptmp);
+			if (!this->game.isGameAlive(ptmp)) {
 				//cout << "wow we find out you're dead!" << endl;
-				deadA = true;
-				if (deadB) {
-					// we already know this player can't play, check if all two can't play.
+				checkDead[player] = true;
+				if (checkDead[ 1-player ]) {
+					// we already know this player can't play, check if the other can't play, either.
 					cout << "Game is ended." << endl;
 					return;
 				}
 			}
 			else
-				autoPlay('A');
+				autoPlay(ptmp);
 		}
-
-		cout << endl;
-		cout << "in side" << endl;
-		if (!deadB) {
-			this->game.setPlayer('B');
-			if (!this->game.isGameAlive('B')) {
-				//cout << "wow we find out you're dead!" << endl;
-				deadB = true;
-				if (deadA) {
-					// we already know this player can't play, check if all two can't play.
-					cout << "Game is ended." << endl;
-					return;
-				}
-			}
-			else
-				autoPlay('B');
-		}
+		player = 1 - player;
 	}
-
 }
 
 void Play::priorityAdvantage()
