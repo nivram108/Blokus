@@ -206,7 +206,8 @@ bool Game::isConnectedToShoulder(Shape& shp, const int& x, const int& y, const c
 {
 	for (int i=0; i<shp.getSize(); i++) {	//each block of the Shape
 		for (int j=0; j<4; j++) { 	//each shoulder of the block
-			if (this->board[shp.getPosX(i)+x+shoulders[j][0]][shp.getPosY(i)+y+shoulders[j][1]] == player && shp.getPosX(i)+x+shoulders[j][0]>=0 && shp.getPosX(i)+x+shoulders[j][0]<14&& shp.getPosY(i)+y+shoulders[j][1]>=0 && shp.getPosY(i)+y+shoulders[j][1]<14)
+			int xtmp = shp.getPosX(i)+x+shoulders[j][0], ytmp = shp.getPosY(i)+y+shoulders[j][1];
+			if (xtmp>=0 && xtmp<14 && ytmp>=0 && ytmp<14 && this->board[xtmp][ytmp] == player)
 				return true;
 		}
 	}
@@ -220,7 +221,8 @@ bool Game::isTouchedBySelf(Shape& shp, const int& x, const int& y, const char& p
 {
 	for (int i=0; i<5; i++) {	//each block of the beside
 		for (int j=0;j<4;j++) {	//each side of the block
-			if (this->board[shp.getPosX(i)+x+sides[j][0]][shp.getPosY(i)+y+sides[j][1]] == player &&  shp.getPosX(i)+x+shoulders[j][0]>=0 && shp.getPosX(i)+x+shoulders[j][0]<14&& shp.getPosY(i)+y+shoulders[j][1]>=0 && shp.getPosY(i)+y+shoulders[j][1]<14)
+			int xtmp = shp.getPosX(i)+x+sides[j][0], ytmp = shp.getPosY(i)+y+sides[j][1];
+			if (xtmp>=0 && xtmp<14 && ytmp>=0 && ytmp<14 && this->board[xtmp][ytmp] == player)
 				return true;
 		}
 	}
@@ -233,7 +235,8 @@ bool Game::isSpare(Shape& shp, const int& x, const int& y)
 {
 	for (int i=0; i<5; i++) {
 		// The block is in board range and unoccupied.
-		if ((shp.getPosX(i)+x < 14 && shp.getPosX(i)+x >= 0 && shp.getPosY(i)+y <14 && shp.getPosY(i)+y >= 0  && this->board[shp.getPosX(i)+x][shp.getPosY(i)+y] == '.')==false) {
+		int xtmp = shp.getPosX(i)+x, ytmp = shp.getPosY(i)+y;
+		if ( !(xtmp<14 && xtmp>=0 && ytmp<14 && ytmp>=0 && this->board[xtmp][ytmp] == '.') ) {
 			this->errorMessage = "The position is illegal or used!";
 			return false;
 		}
@@ -246,7 +249,7 @@ bool Game::isLegalMove(Shape& shp, const int& x, const int& y, const char& playe
 {
 	bool firstStep = (player == 'A') ? this->firstStepFlagA : this->firstStepFlagB;
 	if (firstStep) {	//is first step
-		if (isLegalFirst(shp, x, y, player) == true)	// is first step
+		if (isLegalFirst(shp, x, y, player))	// is first step
 			return true;
 		else
 			return false;
@@ -337,11 +340,13 @@ bool Game::isGameAlive(const char& player)
 	}
 	for (int i=0; i<21; i++) {
 		if (!this->piecesUsePointer[i]) {
-			if (hasPlaceToPut(i, player) == true)// can place
-				cannotPutPieces = false;// can place
+			if (hasPlaceToPut(i, player)) {	// can place
+				cannotPutPieces = false;
+				break;
+			}
 		}
 	}
-	if (cannotPutPieces == true) { // can't place, end.
+	if (cannotPutPieces) { // can't place, end.
 		cout << "|--------------------------------- \n|" << endl;
 		cout << "| " << player << ": You have no more pieces or you can't place any more.\n|" << endl;
 		cout << "| " << player << ": " << counter << " pieces left." << endl;
@@ -366,8 +371,10 @@ bool Game::isGameAliveAI(const char& player)
 	}
 	for (int i=0; i<21; i++) {
 		if (!this->piecesUsePointer[i]) {
-			if (hasPlaceToPut(i, player) == true)
+			if (hasPlaceToPut(i, player) == true) {
 				cannotPutPieces = false;
+				break;
+			}
 		}
 	}
 	
