@@ -238,8 +238,10 @@ void Play::playerAI()
 			else {
 				if (player==0)	// A
 					quit = playerPlay('A');
-				else
+				else {
+					cout << "in auto play" << endl;
 					autoPlay('B');
+				}
 			}
 		}
 		if (quit) return;
@@ -279,8 +281,10 @@ void Play::twoAIs()
 					return;
 				}
 			}
-			else
+			else {
+				cout << "in auto play" << endl;
 				autoPlay(ptmp);
+			}
 		}
 		player = 1 - player;
 	}

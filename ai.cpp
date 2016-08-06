@@ -54,8 +54,13 @@ void AI::autoPlace(int id, char player)
 //If random place fails too many time, call autoPlace.
 void AI::autoPlay(char player)
 {
-	if (game.isGameAliveAI(player) == false)
+	if (game.isGameAliveAI(player) == false) {
+		cout << "i find the answer is false" << endl;
 		return;
+	} else {
+		cout << "coutinue going on autoPlay" << endl;
+	}
+	cout << "in auto play" << endl;
 
 	//init
 	game.setPlayer(player);
@@ -64,8 +69,10 @@ void AI::autoPlay(char player)
 	//select a shape
 	int shapeID = rand()%21;
 	// shape is unavailable or shape can't be placed
-	while (game.isPieceUse(shapeID) || !game.hasPlaceToPut(shapeID, player))
+	while (game.isPieceUse(shapeID) || !game.hasPlaceToPut(shapeID, player)) {
 		shapeID = rand()%21;
+		cout << "i readom pick id:" << shapeID;
+	}
 	selected = game.getShape(shapeID);
 	//rand flip
 	if (rand()%2 == 1)
