@@ -91,7 +91,7 @@ bool Play::playerPlay(const char& player)
 				continue;
 			}
 			this->selected.printShape();
-			
+
 			int x, y;
 			cout << "[ " << player << "'s turn ] input x, y:";
 			cin >> x >> y;
@@ -125,7 +125,7 @@ void Play::autoPlace(const int& id, const char& player)
 	int counter  = 0;
 	selected = game.getShape(id);
 
-	for (int i=0; i<14; i++) {      
+	for (int i=0; i<14; i++) {
 		//Brutal force placement
 		for (int j=0; j<14; j++) {
 			// two flip.
@@ -152,13 +152,14 @@ void Play::autoPlace(const int& id, const char& player)
 //If random place fails too many time, call autoPlace.
 void Play::autoPlay(const char& player)
 {
-	if (game.isGameAliveAI(player) == false)
+	// cout << "this is the isGameAliveAI(player) result: " << game.isGameAliveAI(player) << "<< result." << endl;
+ 	if (game.isGameAliveAI(player) == false)
 		return;
 
 	//init
 	game.setPlayer(player);
 	Shape selected;
-
+	// cout << "continue" << endl;
 	//select a shape
 	int shapeID = rand()%21;
 	// shape is unavailable or shape can't be placed
@@ -173,15 +174,17 @@ void Play::autoPlay(const char& player)
 	int turn = rand()%4;
 	for (int i=0; i<turn; i++)
 		selected.turnClockwise();
-
 	//rand place
 	int x = rand()%14, y = rand()%14;
-	while (game.playerMove(selected, shapeID, player, x, y) == false) { // move is illegal
+	int timer = 0;
+	while (game.playerMove(selected, shapeID, player, x, y) == false && timer < 196) { // move is illegal
+		timer++;
 		x = rand()%14;
 		y = rand()%14;
+		// cout << "step" << timer << ": (x,y): " << x << ", " << y << endl;
 	}
 	game.setPieceUse(shapeID);
-	cout << player << "'s step\n^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^" << endl;
+	// cout << player << "'s step\n^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^" << endl;
 	return;
 }
 
@@ -192,8 +195,8 @@ void Play::twoPlayers()
 	int player = 0;
 	bool quit = false;
 	while (true) {
-		cout << endl;
-		cout << "in side" << endl;
+		// cout << endl;
+		// cout << "in side" << endl;
 		if (!checkDead[player]) {
 			char ptmp = 'A' + player;
 			this->game.setPlayer(ptmp);
@@ -221,8 +224,8 @@ void Play::playerAI()
 	int player = 0;
 	bool quit = false;
 	while (true) {
-		cout << endl;
-		cout << "in side" << endl;
+		// cout << endl;
+		// cout << "in side" << endl;
 		if (!checkDead[player]) {
 			char ptmp = 'A' + player;
 			this->game.setPlayer(ptmp);
@@ -239,7 +242,7 @@ void Play::playerAI()
 				if (player==0)	// A
 					quit = playerPlay('A');
 				else {
-					cout << "in auto play" << endl;
+					// cout << "in auto play" << endl;
 					autoPlay('B');
 				}
 			}
@@ -267,8 +270,8 @@ void Play::twoAIs()
 	bool checkDead[2] = {0};
 	int player = 0;
 	while (true) {
-		cout << endl;
-		cout << "in side" << endl;
+		// cout << endl;
+		// cout << "in side" << endl;
 		if (!checkDead[player]) {
 			char ptmp = 'A' + player;
 			this->game.setPlayer(ptmp);
@@ -282,7 +285,7 @@ void Play::twoAIs()
 				}
 			}
 			else {
-				cout << "in auto play" << endl;
+				// cout << "in auto play" << endl;
 				autoPlay(ptmp);
 			}
 		}
@@ -333,4 +336,3 @@ string Play::winner()
 {
 	return this->game.winner();
 }
-

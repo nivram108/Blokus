@@ -318,8 +318,11 @@ bool Game::hasPlaceToPut(const int& id, const char& player)
 					if (clockwise > 0) selected.turnClockwise();
 
 					// if this piece can put => return true.
-					if(isLegalMove(selected, i, j, player))
+					if(isLegalMove(selected, i, j, player)){
+						// cout << "selected id:" << id << ", and x,y" << i << ", " << j << endl;
+						this->shapes[id].printShape();
 						return true;
+					}
 				}
 			}
 		}
@@ -377,7 +380,7 @@ bool Game::isGameAliveAI(const char& player)
 			}
 		}
 	}
-	
+
 	if (cannotPutPieces){
 		cout << "press!!!" << player << endl;
 		return false;
@@ -407,4 +410,3 @@ string Game::winner()
 	cout << ALeft << " : " << BLeft << endl;
 	return (ALeft < BLeft) ? "A" : "B";
 }
-

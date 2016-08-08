@@ -39,7 +39,7 @@ int main()
 	}
 	else
 		play.priorityAdvantage();
-	
+
 	string s = "";
 	while (s != "seeResult" && pause) {
 		cout << endl;
