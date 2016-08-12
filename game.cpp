@@ -402,11 +402,30 @@ string Game::winner()
 			BLeft += this->shapes[i].getSize();
 	}
 
+	cout << ALeft << " : " << BLeft << endl;
+	if (ALeft < BLeft) return "Player A wins.";
+	else if (ALeft > BLeft) return "Player B wins.";
+	else return "The game ends in a tie.";
+}
+
+//To return the winner of the game and calculate the biggest range.
+char Game::priorityWinner()
+{
+	int ALeft = 0, BLeft = 0;
+	for (int i=0; i<21; i++) {
+		if (!this->piecesUseA[i])
+			ALeft += this->shapes[i].getSize();
+		if (!this->piecesUseB[i])
+			BLeft += this->shapes[i].getSize();
+	}
+
+	//Update the information of the biggest difference between A and B
 	if (ALeft - BLeft > this->biggestRange || BLeft - ALeft > this->biggestRange) {
 		this->biggestRange = ALeft - BLeft;
 		this->biggestRangeA = ALeft;
 		this->biggestRangeB = BLeft;
 	}
+
 	cout << ALeft << " : " << BLeft << endl;
-	return (ALeft < BLeft) ? "A" : "B";
+	return (ALeft < BLeft) ? 'A' : 'B';
 }

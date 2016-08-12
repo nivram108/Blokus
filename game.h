@@ -84,6 +84,8 @@ public:
     bool isGameAlive(const char& player);
     //To return the winner of the game.
     string winner();
+    //To return the winner of the game and calculate the biggest range.
+    char priorityWinner();
 
     //----------------------------AI's NEED--------------------------------//
     //To check if the shape can be place anywhere or not.

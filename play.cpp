@@ -84,12 +84,12 @@ bool Play::playerPlay(const char& player)
 			this->selected.printShape();
 		}
 		else if (instr == 4) { // Next move
-			cout << "shapeID:" << this->shapeID << endl;
-			this->game.printBoard();
 			if (this->selectShape == false) {	//Hasn't select yet
 				cout << "Please Select a shape." << endl;
 				continue;
 			}
+			cout << "shapeID:" << this->shapeID << endl;
+			this->game.printBoard();
 			this->selected.printShape();
 
 			int x, y;
@@ -312,7 +312,7 @@ void Play::priorityAdvantage()
 		this->game.init();
 		twoAIs();
 		cout << times << " to go....";
-		if (this->game.winner() == "A")
+		if (this->game.priorityWinner() == 'A')
 			winA++;
 		else
 			winB++;

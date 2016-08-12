@@ -34,17 +34,19 @@ int main()
 	}
 	else if (mode == 2)
 		play.playerAI();
-	else if (mode == 3){
+	else if (mode == 3) {
 		play.twoAIs();
 	}
-	else
+	else {
 		play.priorityAdvantage();
+		return 0;
+	}
 
 	string s = "";
 	while (s != "seeResult" && pause) {
 		cout << endl;
 		cout << "|--------------------------------- |" << endl;
-		cout << "|   " << endl << "| Please input string : seeResult" << "\n";
+		cout << "|   " << endl << "| Please input string : seeResult" << endl;
 		cout << "|" << endl;
 		cout << "|--------------------------------- \nBlokus>>";
 		cin >> s;
@@ -52,7 +54,7 @@ int main()
 
 	play.printBoard();
 	cout << "|--------------------------------- |" << endl;
-	cout << "|   " << endl << "| Player " << play.winner() << " wins." << "\n";
+	cout << "|   " << endl << "| " << play.winner() << endl;
 	cout << "|" << endl;
 	cout << "|--------------------------------- \nBlokus>>";
 	return 0;
