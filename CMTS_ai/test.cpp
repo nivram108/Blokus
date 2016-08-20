@@ -13,18 +13,21 @@ class Node
 
 class Domain     // typically a game
 {
-   State state;  // current state
+   State state;  // current state 棋盤的現在狀況
    List<Integer> legalActions();    // list of available actions
-   int    applyAction(int action);  // returns winner: None/White/Black/Draw
+                                    // 因為會動態增減 -> 可能不要存成list.
+   int    applyAction(int action);  // returns winner: None/White/Black/Draw 模擬棋局->傳回結果
    int    playout();                // returns: win=+1/draw=0/loss=-1
+                                    // game.cpp ..... 都在這裡
 }
 
 // • MCTS and UCT
-// • MCTS is the general class of algorithms 
+// • MCTS is the general class of algorithms
 // • UCT is a specific embodiment of MCTS (具體化的方式)
 // • UCT = Upper Confidence Bounds for Trees（帶入 Exploit & Explore function）
 // • UCT = MCTS + UCB (Upper Confidence Bounds)
 
+// 樹的搜尋:
 void __UCT__Search(State s) {
 
 	// create root Node v_0 with State s_0
@@ -37,7 +40,7 @@ void __UCT__Search(State s) {
 	return movement(bestChild(v_current, 0));
 }
 
-
+// 根據目前節點 -> 如果還沒達到足夠 child node 就繼續 create node，如果達到個數，開始找最好 node
 Node treePolicy(Node v) {
 
 	while( /* v is nonterminal */) {
@@ -51,6 +54,7 @@ Node treePolicy(Node v) {
 	return v;
 }
 
+// 如果 State 未結束 (棋盤還能下)，開始做模擬棋局的動作，回傳勝利或是輸惹
 void defaultPolicy(State s) {
 	while( /* State s is non-terminal */ ) {
 		/* choose shape in random from movementList(s) */
@@ -59,13 +63,7 @@ void defaultPolicy(State s) {
 	return /* reward from State s (1 -> win or 0 -> gg) */
 }
 
-// 如：Einstein's death means a great loss to science.（愛因斯坦的死對科學是重大的損失） 
-// 而Lose是動詞，其意是：失去 
-// 如：You will lose all your money, if you indulge yourself in gambling. 
-// 而Lost可以是lose的過去式或過去分詞，但它也是一個形容詞，其意是：遺失的，迷途的，如： 
-// The lost ring was found yesterday. （昨天找到了那遺失的戒指） 
-// The lost child is crying. (那迷途的小孩正在大哭） 
-
+// 傳回最佳點的權重，一路 backup 更新，一條龍更新上去。
 void backUp(Node current, Node v, float r) {
 	while( v != current) {
 		v.visit = v.visit + 1;
@@ -74,16 +72,18 @@ void backUp(Node current, Node v, float r) {
 		/* [IF] efficient backUp for 2-player game, zero-sum game. */
 		/* vvvvv add the following code vvvvv */
 		/* r = -r */
-		
+
 		v = v.parent;
 	}
 }
 
+// 這我不會說耶，從 Actionlist 選出一個新的 action 嗎？
 Node expand(Node v) {
 
 	return v_child;
 }
 
+// 從此 node 的 child 選出最棒的那個。
 Node bestChild(Node v, float c) {
 	/* get the best one <- all the child from Node v */
 

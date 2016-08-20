@@ -82,7 +82,6 @@ void Shape::printShape()
 	// The original uniX and uniY keep (0,0) after normalization.
 	Shape tmp = *this;
 	tmp.normalizeShape();
-
 	for (int i=0; i<5; i++) {
 		for (int j=0; j<5; j++) {
 			if (tmp.isShape(i, j)) {
@@ -289,7 +288,7 @@ Shape assignshape_14()
 {
 	/*
 	   O
-	   OOO
+	  OOO
 	   O
 	 */
 	Shape tmp;
@@ -366,5 +365,3 @@ Shape assignshape_20()
 	tmp.set(5, "00111", "01123");
 	return tmp;
 }
-
-
