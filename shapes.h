@@ -15,6 +15,14 @@ class Shape
 		int x[5];
 		int y[5];
 
+		int cornerSize;
+		int cornerX[8];
+		int cornerY[8];
+
+		int edgeSize;
+		int edgeX[12];
+		int edgeY[12];
+
 		// The point to identify
 		// Always be (0,0) to access the correct position in use of game.cpp
 		int uniX;
@@ -26,7 +34,7 @@ class Shape
 	public:
 		Shape();
 		Shape(const Shape& shp);
-		void set(const int& size, const string& xStr, const string& yStr);
+		void set(const int& size, const string& xStr, const string& yStr, const int& cSize, const string& cxStr, const string& cyStr, const int& eSize, const string& exStr, const string& eyStr);
 		void flip();
 		void turnClockwise();
 		void printShape();
