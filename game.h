@@ -29,7 +29,7 @@ class Game
 {
 private:
     int biggestRange, biggestRangeA, biggestRangeB;
-    vector<Shape> shapes;
+    Shape shapes[21];
     char board[14][14];
     bool firstStepFlagA, firstStepFlagB;
     string errorMessage;

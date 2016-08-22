@@ -29,6 +29,8 @@ const int Game::sides[][2] = {{1, 0}, {0, 1}, {0, -1}, {-1, 0}};
 Game::Game()
 {
 	this->biggestRange = 0;
+	memset(this->shapes, 0, sizeof(this->shapes));
+	memset(this->board, 0, sizeof(this->board));
 	this->firstStepFlagA = true;
 	this->firstStepFlagB = true;
 	this->errorMessage = "";
@@ -50,12 +52,11 @@ void Game::init()
 		this->piecesUseA[i] = false;
 		this->piecesUseB[i] = false;
 	}
-
-	this->shapes.push_back(assignshape_00()); this->shapes.push_back(assignshape_01()); this->shapes.push_back(assignshape_02()); this->shapes.push_back(assignshape_03()); this->shapes.push_back(assignshape_04());
-	this->shapes.push_back(assignshape_05()); this->shapes.push_back(assignshape_06()); this->shapes.push_back(assignshape_07()); this->shapes.push_back(assignshape_08()); this->shapes.push_back(assignshape_09());
-	this->shapes.push_back(assignshape_10()); this->shapes.push_back(assignshape_11()); this->shapes.push_back(assignshape_12()); this->shapes.push_back(assignshape_13()); this->shapes.push_back(assignshape_14());
-	this->shapes.push_back(assignshape_15()); this->shapes.push_back(assignshape_16()); this->shapes.push_back(assignshape_17()); this->shapes.push_back(assignshape_18()); this->shapes.push_back(assignshape_19());
-	this->shapes.push_back(assignshape_20());
+	shapes[0] = assignshape_00();	shapes[1] = assignshape_01();	shapes[2] = assignshape_02();	shapes[3] = assignshape_03();	shapes[4] = assignshape_04();
+	shapes[5] = assignshape_05();	shapes[6] = assignshape_06();	shapes[7] = assignshape_07();	shapes[8] = assignshape_08();	shapes[9] = assignshape_09();
+	shapes[10] = assignshape_10();	shapes[11] = assignshape_11();	shapes[12] = assignshape_12();	shapes[13] = assignshape_13();	shapes[14] = assignshape_14();
+	shapes[15] = assignshape_15();	shapes[16] = assignshape_16();	shapes[17] = assignshape_17();	shapes[18] = assignshape_18();	shapes[19] = assignshape_19();
+	shapes[20] = assignshape_20();
 }
 
 //Set all the pointers to the assigned player's
@@ -67,7 +68,7 @@ void Game::setPlayer(const char& player)
 //Get the shape of the assigned ID
 Shape Game::getShape(const int& shapeID)
 {
-	if (shapeID<this->shapes.size() && shapeID>=0)
+	if (shapeID<21 && shapeID>=0)
 		return this->shapes[shapeID];
 
 	Shape nullShape;
