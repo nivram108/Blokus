@@ -76,11 +76,12 @@ bool Shape::isShape(const int& x, const int& y)
 
 void Shape::flip()
 {
-	for (int i=0; i<5; i++) {
+	for (int i=0; i<5; i++)
 		this->x[i] *= -1;
+	for (int i=0; i<8; i++)
 		this->cornerX[i] *= -1;
+	for (int i=0; i<12; i++)
 		this->edgeX[i] *= -1;
-	}
 }
 
 void Shape::turnClockwise()
@@ -90,11 +91,13 @@ void Shape::turnClockwise()
 		tmp = this->x[i];
 		this->x[i] = this->y[i];
 		this->y[i] = -1 * tmp;
-
+	}
+	for (int i=0; i<8; i++) {
 		tmp = this->cornerX[i];
 		this->cornerX[i] = this->cornerY[i];
-		this->cornerY[i] = -1 * tmp;
-
+		this->cornerY[i] = -1 * tmp;		
+	}
+	for (int i=0; i<12; i++) {
 		tmp = this->edgeX[i];
 		this->edgeX[i] = this->edgeY[i];
 		this->edgeY[i] = -1 * tmp;
@@ -135,6 +138,7 @@ void Shape::printShape()
 		cout << endl;
 	}
 }
+
 void Shape::operator = (const Shape& shp)
 {
 	this->size = shp.size;
@@ -169,6 +173,36 @@ int Shape::getPosX(const int& k)
 int Shape::getPosY(const int& k)
 {
 	return this->y[k];
+}
+
+int Shape::getCornerSize()
+{
+	return this->cornerSize;
+}
+
+int Shape::getCornerX(const int& k)
+{
+	return this->cornerX[k];
+}
+
+int Shape::getCornerY(const int& k)
+{
+	return this->cornerY[k];
+}
+
+int Shape::getEdgeSize()
+{
+	return this->edgeSize;
+}
+
+int Shape::getEdgeX(const int& k)
+{
+	return this->edgeX[k];
+}
+
+int Shape::getEdgeY(const int& k)
+{
+	return this->edgeY[k];
 }
 
 //	'/' - '0' = -1

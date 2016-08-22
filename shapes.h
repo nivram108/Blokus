@@ -42,6 +42,12 @@ class Shape
 		int getSize();
 		int getPosX(const int& k);
 		int getPosY(const int& k);
+		int getCornerSize();
+		int getCornerX(const int& k);
+		int getCornerY(const int& k);
+		int getEdgeSize();
+		int getEdgeX(const int& k);
+		int getEdgeY(const int& k);
 };
 
 Shape assignshape_00();

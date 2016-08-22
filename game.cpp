@@ -23,9 +23,6 @@ using namespace std;
 //  shp   : Abbr for shape.
 //  block : smallest unit on the board. 1x1 square.
 
-const int Game::shoulders[][2] = {{1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
-const int Game::sides[][2] = {{1, 0}, {0, 1}, {0, -1}, {-1, 0}};
-
 Game::Game()
 {
 	this->biggestRange = 0;
@@ -205,12 +202,10 @@ bool Game::isLegalFirst(Shape& shp, const int& x, const int& y, const char& play
 //To check if the block is connected so it's LEGAL.
 bool Game::isConnectedToShoulder(Shape& shp, const int& x, const int& y, const char& player)
 {
-	for (int i=0; i<shp.getSize(); i++) {	//each block of the Shape
-		for (int j=0; j<4; j++) { 	//each shoulder of the block
-			int xtmp = shp.getPosX(i)+x+shoulders[j][0], ytmp = shp.getPosY(i)+y+shoulders[j][1];
-			if (xtmp>=0 && xtmp<14 && ytmp>=0 && ytmp<14 && this->board[xtmp][ytmp] == player)
-				return true;
-		}
+	for (int i=0; i<shp.getCornerSize(); i++) {
+		int xtmp = shp.getCornerX(i)+x, ytmp = shp.getCornerY(i)+y;
+		if (xtmp>=0 && xtmp<14 && ytmp>=0 && ytmp<14 && this->board[xtmp][ytmp] == player)
+			return true;
 	}
 	this->errorMessage = "The shape is not connected to any shoulder!";
 	return false;
@@ -220,12 +215,10 @@ bool Game::isConnectedToShoulder(Shape& shp, const int& x, const int& y, const c
 //To check if the block is touched so it's ILLEGAL.
 bool Game::isTouchedBySelf(Shape& shp, const int& x, const int& y, const char& player)
 {
-	for (int i=0; i<5; i++) {	//each block of the beside
-		for (int j=0;j<4;j++) {	//each side of the block
-			int xtmp = shp.getPosX(i)+x+sides[j][0], ytmp = shp.getPosY(i)+y+sides[j][1];
-			if (xtmp>=0 && xtmp<14 && ytmp>=0 && ytmp<14 && this->board[xtmp][ytmp] == player)
-				return true;
-		}
+	for (int i=0; i<shp.getEdgeSize(); i++) {
+		int xtmp = shp.getEdgeX(i)+x, ytmp = shp.getEdgeY(i)+y;
+		if (xtmp>=0 && xtmp<14 && ytmp>=0 && ytmp<14 && this->board[xtmp][ytmp] == player)
+			return true;
 	}
 	this->errorMessage = "The shape is touched by some sides!";
 	return false;
@@ -321,7 +314,7 @@ bool Game::hasPlaceToPut(const int& id, const char& player)
 					// if this piece can put => return true.
 					if(isLegalMove(selected, i, j, player)){
 						// cout << "selected id:" << id << ", and x,y" << i << ", " << j << endl;
-						this->shapes[id].printShape();
+						//this->shapes[id].printShape();
 						return true;
 					}
 				}

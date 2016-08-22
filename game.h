@@ -38,9 +38,6 @@ private:
     bool piecesUseA[21], piecesUseB[21];
     bool* piecesUsePointer;
 
-    static const int shoulders[][2];
-    static const int sides[][2];
-
     //Check if it's first step and if it's a legal first step.
     bool isLegalFirst(Shape& shp, const int& x, const int& y, const char& player);
     //To check if the block is connected so it's LEGAL
